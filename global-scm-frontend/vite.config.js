@@ -15,6 +15,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true
+      },
+      '/gdacs': {
+        target: 'https://www.gdacs.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/gdacs/, '')
       }
     }
   }

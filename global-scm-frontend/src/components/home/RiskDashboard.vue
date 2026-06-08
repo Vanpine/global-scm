@@ -3,7 +3,7 @@
  * RiskDashboard.vue — 全球风险地图控制塔（数据中枢）
  *
  * 职责：
- *   1. 定义静态演示数据（全球主要港口、风险区域、航线）
+ *   1. 从 GDACS 拉取实时灾害数据（洪水/气旋/野火/干旱/火山），替换原有的静态港口风险点
  *   2. 从 USGS 拉取实时地震数据（纯前端直连，无后端中转）
  *   3. 通过 provide() 将数据下发给子组件 Globe3D 和 RiskFeed
  * 子组件关系：
@@ -21,37 +21,31 @@ defineProps({
 })
 
 // ═══════════════════════════════════════════════════════
-// 一、静态演示数据（写死在前端，不依赖后端）
+// 一、GDACS 全球灾害数据（动态——免费、无需密钥）
 // ═══════════════════════════════════════════════════════
 
-// ── 全球关键节点（港口 / 风险区域）────────────────────
-// level 等级：high=高危  watch=关注  normal=正常
-// 这些数据会被 Globe3D 渲染为地球上的点状柱子、脉冲圈和文字标签
-const POINTS = [
-  { lat: 48.4,  lng: 35.0,   level: 'high',   zh: '黑海航线中断风险',       en: 'Black Sea route disruption' },
-  { lat: 15.0,  lng: 42.0,   level: 'high',   zh: '红海 / 曼德海峡航线告警',  en: 'Red Sea / Bab-el-Mandeb alert' },
-  { lat: 33.75, lng: -118.19, level: 'high',   zh: '美西长滩港罢工 · 滞港',   en: 'Long Beach strike · congestion' },
-  { lat: 9.1,   lng: -79.7,  level: 'watch',  zh: '巴拿马运河干旱限航',       en: 'Panama Canal drought limits' },
-  { lat: 30.0,  lng: 32.35,  level: 'watch',  zh: '苏伊士运河通航关注',       en: 'Suez Canal transit watch' },
-  { lat: 24.5,  lng: 119.5,  level: 'watch',  zh: '台湾海峡局势关注',         en: 'Taiwan Strait watch' },
-  { lat: 1.29,  lng: 103.85, level: 'normal', zh: '新加坡枢纽港',             en: 'Singapore' },
-  { lat: 31.23, lng: 121.47, level: 'normal', zh: '上海港',                   en: 'Shanghai' },
-  { lat: 53.55, lng: 9.99,   level: 'normal', zh: '汉堡港',                   en: 'Hamburg' },
-  { lat: 25.27, lng: 55.30,  level: 'normal', zh: '迪拜杰贝阿里港',           en: 'Dubai' }
-]
+// GDACS 事件类型 → 中文名
+const GDACS_TYPE_ZH = {
+  EQ: '地震',
+  FL: '洪水',
+  TC: '热带气旋',
+  VO: '火山喷发',
+  DR: '干旱',
+  WF: '野火',
+  TS: '海啸',
+}
 
-// ── 航线弧线（起点 → 终点 + 渐变色）──────────────────
-// color 数组 [起始色, 结束色] 给 arcDashAnimateTime 动画用
-const ARCS = [
-  { startLat: 31.23, startLng: 121.47, endLat: 33.75, endLng: -118.19, color: ['#ff3b30', '#ff9500'] },  // 上海→长滩
-  { startLat: 31.23, startLng: 121.47, endLat: 53.55, endLng: 9.99,    color: ['#ff9500', '#ff3b30'] },  // 上海→汉堡
-  { startLat: 1.29,  startLng: 103.85, endLat: 51.95, endLng: 4.4,     color: ['#ff9500', '#ff3b30'] },  // 新加坡→鹿特丹
-  { startLat: 31.23, startLng: 121.47, endLat: 1.29,  endLng: 103.85,  color: ['#2997ff', '#2997ff'] },  // 上海→新加坡
-  { startLat: 25.27, startLng: 55.30,  endLat: 53.55, endLng: 9.99,    color: ['#2997ff', '#5e5ce6'] }   // 迪拜→汉堡
-]
+// GDACS alert level → 我们的风险等级
+function gdacsLevel(alertLevel) {
+  if (alertLevel === 'Red')    return 'high'
+  if (alertLevel === 'Orange') return 'watch'
+  return 'normal'
+}
+
+const disasterPoints = ref([])  // GDACS 实时灾害数据（直接提供给 Globe3D 作为 riskPoints）
 
 // ═══════════════════════════════════════════════════════
-// 二、USGS 实时地震数据（纯前端 fetch，每 60 秒刷新）
+// 三、USGS 实时地震数据（纯前端 fetch，每 60 秒刷新）
 // ═══════════════════════════════════════════════════════
 
 // USGS 公开 API：返回过去 1 天内全球 2.5 级以上的地震（GeoJSON 格式）
@@ -101,11 +95,81 @@ async function fetchQuakes() {
   }
 }
 
+// ── 拉取 GDACS 灾害数据（通过 Vite 代理绕过 CORS）───
+async function fetchGDACS() {
+  try {
+    const res = await fetch('/gdacs/xml/rss.xml')
+    const xmlText = await res.text()
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(xmlText, 'text/xml')
+
+    // XML 命名空间
+    const geoNS   = 'http://www.w3.org/2003/01/geo/wgs84_pos#'
+    const gdacsNS = 'http://www.gdacs.org'
+
+    const disasters = []
+    doc.querySelectorAll('item').forEach(item => {
+      const eventType = item.getElementsByTagNameNS(gdacsNS, 'eventtype')[0]?.textContent
+      if (!eventType || eventType === 'EQ') return
+
+      // ── 坐标：优先用 georss:point（格式 "lat lng"），备选 geo:Point 子元素 ──
+      let lat, lng
+      const georssEl = item.getElementsByTagNameNS('http://www.georss.org/georss', 'point')[0]
+      if (georssEl?.textContent) {
+        const parts = georssEl.textContent.trim().split(/\s+/)
+        lat = parseFloat(parts[0])
+        lng = parseFloat(parts[1])
+      }
+      // 备选：geo:lat / geo:long
+      if (isNaN(lat) || isNaN(lng)) {
+        lat = parseFloat(item.getElementsByTagNameNS(geoNS, 'lat')[0]?.textContent)
+        lng = parseFloat(item.getElementsByTagNameNS(geoNS, 'long')[0]?.textContent)
+      }
+
+      // 严格边界校验：纬度 [-90, 90]，经度 [-180, 180]
+      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
+
+      // 预警等级、标题、链接
+      const alertLevel = item.getElementsByTagNameNS(gdacsNS, 'alertlevel')[0]?.textContent || 'Green'
+      const title = item.querySelector('title')?.textContent || ''
+      const link  = item.querySelector('link')?.textContent || ''
+      const country  = item.getElementsByTagNameNS(gdacsNS, 'country')[0]?.textContent || ''
+      const fromDate = item.getElementsByTagNameNS(gdacsNS, 'fromdate')[0]?.textContent || ''
+      const populationEl = item.getElementsByTagNameNS(gdacsNS, 'population')[0]
+      const population   = populationEl?.textContent || ''
+      const severityEl   = item.getElementsByTagNameNS(gdacsNS, 'severity')[0]
+      const severity     = severityEl?.textContent || ''
+
+      const typeZh = GDACS_TYPE_ZH[eventType] || eventType
+      const time   = new Date(fromDate).getTime()
+
+      disasters.push({
+        lat, lng,
+        level: gdacsLevel(alertLevel),
+        type: eventType,
+        typeZh,
+        zh: typeZh + ' · ' + country + (severity ? ' · ' + severity : ''),
+        en: eventType + ' · ' + country + ' · ' + title,
+        url: link,
+        time: isNaN(time) ? 0 : time,
+        population,
+        severity,
+      })
+    })
+
+    // 按时间倒序，取前 50 条在 3D 地球上展示
+    disasters.sort((a, b) => b.time - a.time)
+    disasterPoints.value = disasters.slice(0, 50)
+  } catch (e) {
+    console.warn('GDACS 灾害数据获取失败', e)
+  }
+}
+
 // ═══════════════════════════════════════════════════════
 // 三、依赖注入：将数据下发给所有子组件
 // ═══════════════════════════════════════════════════════
-provide('riskPoints', POINTS)
-provide('riskArcs', ARCS)
+provide('riskPoints', disasterPoints)   // GDACS 动态灾害数据（ref 响应式）
+
 provide('quakePoints', quakePoints)   // 响应式 ref，子组件能感知数据变化
 provide('liveOK', liveOK)
 provide('lastUpdated', lastUpdated)
@@ -114,8 +178,11 @@ provide('lastUpdated', lastUpdated)
 // 四、生命周期
 // ═══════════════════════════════════════════════════════
 onMounted(async () => {
-  await fetchQuakes()                              // 首次加载立刻拉取
-  refreshTimer = setInterval(fetchQuakes, 60000)   // 之后每 60 秒自动刷新
+  await Promise.all([fetchQuakes(), fetchGDACS()]) // 首次并行拉取 USGS + GDACS
+  refreshTimer = setInterval(() => {
+    fetchQuakes()
+    fetchGDACS()
+  }, 60000)  // 每 60 秒自动刷新
 })
 
 onUnmounted(() => {
@@ -130,7 +197,7 @@ onUnmounted(() => {
       <div class="text-center reveal" style="margin-bottom:48px;">
         <div class="eyebrow">CONTROL TOWER · 全球风险地图</div>
         <h2 class="section-title">实时洞察全球供应链风险</h2>
-        <p class="section-sub">实时监测地缘冲突、港口拥堵、极端天气与政策变化，高危区域自动高亮预警。</p>
+        <p class="section-sub">实时接入 GDACS 全球灾害（洪水/气旋/野火/干旱/火山）与 USGS 地震数据，高危区域自动高亮预警。</p>
       </div>
 
       <!-- 主体：3D 地球（左） + 轮播面板（右）-->
@@ -151,7 +218,7 @@ onUnmounted(() => {
       </div>
 
       <!-- 底部数据来源说明 -->
-      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">* 全球地震数据来自 USGS 实时接口（纯前端直连，每 60 秒自动刷新），点击条目可跳转 USGS 官网详情页。</p>
+      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">* 全球灾害数据来自 GDACS（每 60 秒刷新），地震数据来自 USGS，点击条目可跳转官网详情页。</p>
     </div>
   </section>
 </template>

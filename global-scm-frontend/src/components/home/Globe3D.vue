@@ -5,21 +5,18 @@
  * 基于 three-globe (Globe.gl) 库，在页面上渲染一个可交互的 3D 地球。
  *
  * 地球上的视觉元素：
- *   · 点状标记（ports/事件）     → 港口 & 地震事件
+ *   · 点状柱（points）           → GDACS 灾害 + USGS 地震（动态呼吸起伏）
  *   · 脉冲圈（rings）            → 高危/关注区域向外扩散的涟漪
- *   · 飞线（arcs）               → 航线弧线
- *   · 标签（labels）             → 正常港口的文字标签
  *
- * 数据来源：通过 Vue 的 inject 从父组件 RiskDashboard 注入
- *   - riskPoints  : 静态港口 & 风险点（黑海、红海、上海港等）
- *   - riskArcs    : 静态航线弧线
- *   - quakePoints : USGS 实时地震数据（动态刷新）
+ * 数据来源：通过 Vue 的 inject 从父组件 RiskDashboard 注入（全部动态，无静态数据）
+ *   - riskPoints  : GDACS 实时灾害数据（ref 响应式）
+ *   - quakePoints : USGS 实时地震数据（ref 响应式）
  *
  * 交互特性：
  *   - 自动旋转（鼠标悬停时暂停，离开后恢复）
  *   - 滚轮缩放
  *   - 拖拽旋转视角
- *   - 悬停点状元素弹出详情提示框
+ *   - 悬停点状元素弹出毛玻璃发光提示框
  */
 
 import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
@@ -27,9 +24,9 @@ import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
 // ── 从父组件注入数据 ──────────────────────────────────
 // inject(key, 默认值)  —— Vue3 的依赖注入，类似 React 的 Context
 // 父组件 RiskDashboard 通过 provide() 提供这些数据
-const riskPoints = inject('riskPoints', [])       // 静态风险点/港口
-const riskArcs   = inject('riskArcs', [])         // 静态航线弧线
-const quakePoints = inject('quakePoints', ref([])) // USGS 地震点（响应式）
+const riskPoints = inject('riskPoints', ref([]))  // GDACS 实时灾害点（响应式 ref）
+
+const quakePoints = inject('quakePoints', ref([])) // USGS 地震点（响应式 ref）
 
 // ── 颜色 & 高度映射 ──────────────────────────────────
 // 根据风险等级返回对应颜色和地球表面凸起高度
@@ -62,64 +59,50 @@ function initGlobe() {
   const el = document.getElementById('globeViz')
   if (!el || typeof Globe === 'undefined') return  // Globe 库未加载则退出
 
-  // 筛选"正常"等级的点作为文字标签展示
-  const HUBS = riskPoints.filter(d => d.level === 'normal')
-
   // 链式调用创建 Globe 实例 —— 每个方法都返回 globe 实例本身（Builder 模式）
+  const startTime = Date.now()  // 记录初始化时间，用于点状柱呼吸动画
   globeWorld = Globe()
 
     // ── 地球纹理贴图 ────────────────────────────────
-    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')  // 地球卫星图
-    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')      // 凹凸纹理（山脉立体感）
-    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')     // 背景星空
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
 
     // ── 大气层（隐藏经纬网格，画面更干净）────────────
     .showGraticules(false)
-    .showAtmosphere(true).atmosphereColor('#4da6ff').atmosphereAltitude(0.22)  // 柔和蓝色大气光晕
+    .showAtmosphere(true).atmosphereColor('#4da6ff').atmosphereAltitude(0.22)
 
-    // ── 点状数据（港口 + 地震）──────────────────────
-    // allPoints() 合并静态点和动态地震点
+    // ── 点状数据（GDACS 灾害 + USGS 地震）───────────
     .pointsData(allPoints())
-    .pointLat('lat').pointLng('lng')           // 指定数据中经纬度字段名
-    .pointColor(d => COLORS[d.level])           // 据风险等级染色
-    .pointAltitude(d => ALT[d.level] || 0.045)  // 据风险等级决定柱子高度
-    .pointRadius(d => d.level === 'high' ? 0.55 : (d.level === 'watch' ? 0.4 : 0.3))  // 等级越大柱越粗
-    .pointResolution(32)                        // 多边形面数（更高→更圆滑精致）
-    // 悬停时弹出的 HTML 提示框（毛玻璃 + 发光边框风格）
+    .pointLat('lat').pointLng('lng')
+    .pointColor(d => COLORS[d.level])
+    // 高度动态呼吸：统一频率，振幅按等级区分（高危→大波动，正常→微波动）
+    .pointAltitude(d => {
+      const base = ALT[d.level] || 0.045
+      const t = (Date.now() - startTime) * 0.001                       // 统一时间基准
+      const amp = d.level === 'high' ? 0.035 : (d.level === 'watch' ? 0.022 : 0.012)
+      return base + Math.sin(t * 2.0) * amp                            // 全点同频同相，等级决定波动大小
+    })
+    .pointRadius(d => d.level === 'high' ? 0.55 : (d.level === 'watch' ? 0.4 : 0.3))
+    .pointResolution(48)  // 更高的面数 → 柱体更圆润光滑
+    // 悬停提示框（仅鼠标悬停时弹出，不污染画面）
     .pointLabel(d =>
       '<div style="font:500 12.5px sans-serif;color:#fff;' +
-      'background:rgba(10,14,26,0.92);padding:6px 10px;border-radius:10px;' +
+      'background:rgba(10,14,26,0.92);padding:8px 12px;border-radius:10px;' +
       'border:1px solid ' + COLORS[d.level] + ';' +
-      'box-shadow:0 0 14px ' + COLORS[d.level] + '44;">' +
+      'box-shadow:0 0 18px ' + COLORS[d.level] + '55, inset 0 0 8px ' + COLORS[d.level] + '15;">' +
       d.zh + '</div>'
     )
 
-    // ── 飞线（航线弧线）────────────────────────────
-    .arcsData(riskArcs)
-    .arcColor('color')                            // 使用数据中的 color 字段（渐变数组）
-    .arcStroke(0.55)                              // 线宽
-    .arcDashLength(0.5).arcDashGap(0.2)           // 虚线样式：实线长度 / 间隔
-    .arcDashAnimateTime(2200)                     // 虚线流动动画周期（ms）
-    .arcAltitudeAutoScale(0.42)                   // 弧线高度自动缩放
-
-    // ── 脉冲圈（高危/关注区域的涟漪预警）──────────
-    .ringsData(riskPoints.filter(d => d.level !== 'normal'))  // 只给非正常点加脉冲
-    // ringColor 接受一个函数，参数 t 从 0→1 表示涟漪从内到外
+    // ── 脉冲圈（高危/关注区域向外扩散涟漪）──────────
+    .ringsData(riskPoints.value.filter(d => d.level !== 'normal'))
     .ringColor(d => { const c = COLORS[d.level]; return t => hexToRgba(c, 1 - t) })
-    .ringMaxRadius(5.5)                           // 最大扩散半径
-    .ringPropagationSpeed(2.8)                    // 扩散速度
-    .ringRepeatPeriod(900)                        // 重复周期（ms）
-
-    // ── 标签（正常港口的文字标注）──────────────────
-    .labelsData(HUBS)
-    .labelLat('lat').labelLng('lng')
-    .labelText(d => d.zh)                         // 显示中文名
-    .labelSize(0.8).labelDotRadius(0.26)
-    .labelColor(() => 'rgba(180,210,255,0.7)')
-    .labelResolution(2)
+    .ringMaxRadius(5.5)
+    .ringPropagationSpeed(2.8)
+    .ringRepeatPeriod(900)
 
     // 挂载到 DOM 节点
-    (el)  // ← Globe() 返回一个函数，传入 DOM 元素完成挂载
+    (el)
 
   // ── 相机控制 ──────────────────────────────────────
   globeWorld.controls().autoRotate = true         // 自动旋转
@@ -138,9 +121,9 @@ function initGlobe() {
   window.addEventListener('resize', resize)
 }
 
-// ── 合并静态点 + 动态地震点 ─────────────────────────
+// ── 合并灾害点 + 地震点 ─────────────────────────
 function allPoints() {
-  return [...riskPoints, ...quakePoints.value]
+  return [...riskPoints.value, ...quakePoints.value]
 }
 
 // ── 响应窗口大小变化 ─────────────────────────────────
@@ -161,10 +144,10 @@ function refreshGlobe() {
   }
 }
 
-// watch: 监听 quakePoints 变化（USGS 每60秒拉取一次），自动刷新地球
-watch(quakePoints, () => {
+// watch: 监听 quakePoints 和 riskPoints 变化，数据更新时自动刷新地球
+watch([quakePoints, riskPoints], () => {
   refreshGlobe()
-}, { deep: true })  // deep: true 表示深度监听数组/对象内部变化
+}, { deep: true })
 
 // ── 生命周期 ────────────────────────────────────────
 onMounted(() => {
