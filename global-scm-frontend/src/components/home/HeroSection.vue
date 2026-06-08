@@ -14,8 +14,8 @@ function parseTags(json) {
 
 <template>
   <section class="hero">
-    <video v-if="hero.videoUrl" class="hero-video" autoplay muted loop playsinline>
-      <source :src="'/' + hero.videoUrl" type="video/mp4">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="/vedio.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">

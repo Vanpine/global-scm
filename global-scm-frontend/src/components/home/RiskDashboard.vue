@@ -6,7 +6,6 @@
  *   1. 定义静态演示数据（全球主要港口、风险区域、航线）
  *   2. 从 USGS 拉取实时地震数据（纯前端直连，无后端中转）
  *   3. 通过 provide() 将数据下发给子组件 Globe3D 和 RiskFeed
- *
  * 子组件关系：
  *   RiskDashboard (provide 数据)
  *     ├── Globe3D   — 3D 地球可视化（inject 数据后渲染）
@@ -105,8 +104,6 @@ async function fetchQuakes() {
 // ═══════════════════════════════════════════════════════
 // 三、依赖注入：将数据下发给所有子组件
 // ═══════════════════════════════════════════════════════
-// provide(key, value) — 父组件"提供"数据
-// 子组件用 inject(key) 获取，无需层层传递 props
 provide('riskPoints', POINTS)
 provide('riskArcs', ARCS)
 provide('quakePoints', quakePoints)   // 响应式 ref，子组件能感知数据变化
@@ -136,20 +133,16 @@ onUnmounted(() => {
         <p class="section-sub">实时监测地缘冲突、港口拥堵、极端天气与政策变化，高危区域自动高亮预警。</p>
       </div>
 
-      <!-- 主体：3D 地球（左） + 地震快讯面板（右）-->
+      <!-- 主体：3D 地球（左） + 轮播面板（右）-->
       <div class="risk-map reveal">
         <div class="globe-wrap">
-          <!-- 地球挂载容器：Globe3D 组件会在这个 div 里渲染 Three.js 画布 -->
           <div id="globeViz"></div>
           <Globe3D />
-
-          <!-- 地球左下角图例 -->
           <div class="globe-legend">
             <span><i style="background:#ff3b30"></i>高危</span>
             <span><i style="background:#ff9500"></i>关注</span>
             <span><i style="background:#34c759"></i>正常</span>
           </div>
-          <!-- 地球右上角操作提示 -->
           <div class="globe-hint">拖动旋转 · 悬停查看详情</div>
         </div>
 

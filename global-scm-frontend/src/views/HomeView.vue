@@ -43,6 +43,7 @@ function parseItems(json) {
   try { return JSON.parse(json || '[]') } catch { return [] }
 }
 
+
 const { refresh: refreshReveal } = useScrollReveal()
 </script>
 
