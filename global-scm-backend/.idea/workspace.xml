@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/ArticleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/ArticleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleBlockService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleBlockService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleBlockServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleBlockServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/controller/ArticleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/controller/ArticleController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleBlockServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleBlockServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/api/article.js" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/api/article.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/views/IntelView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/views/IntelView.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/views/NewsDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/views/NewsDetail.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/assets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/assets/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +35,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.Application.executor": "Run",
     "Spring Boot.ScmApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "like",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

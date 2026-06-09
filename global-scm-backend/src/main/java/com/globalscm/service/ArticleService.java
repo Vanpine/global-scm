@@ -26,4 +26,17 @@ public interface ArticleService {
      * 根据 ID 获取单篇文章
      */
     Article getById(Long id);
+
+    /**
+     * 递增文章阅读量，返回更新后的文章
+     */
+    Article incrementViewCount(Long id);
+
+    /**
+     * 点赞/取消点赞
+     * @param id   文章 ID
+     * @param like true=点赞+1, false=取消点赞-1
+     * @return 更新后的文章
+     */
+    Article toggleLike(Long id, boolean like);
 }

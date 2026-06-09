@@ -59,4 +59,40 @@ public class ArticleController {
             "tags", tags
         ));
     }
+
+    /**
+     * 递增文章阅读量
+     */
+    @Operation(summary = "递增文章阅读量")
+    @PostMapping("/{id}/view")
+    public Result<?> incrementView(@PathVariable Long id) {
+        var article = articleService.incrementViewCount(id);
+        if (article == null) {
+            return Result.fail(404, "文章不存在");
+        }
+        return Result.ok(Map.of(
+            "viewCount", article.getViewCount(),
+            "likeCount", article.getLikeCount()
+        ));
+    }
+
+    /**
+     * 点赞/取消点赞
+     */
+    @Operation(summary = "点赞/取消点赞")
+    @PostMapping("/{id}/like")
+    public Result<?> toggleLike(@PathVariable Long id, @RequestBody Map<String, Boolean> body) {
+        Boolean liked = body.get("liked");
+        if (liked == null) {
+            return Result.fail(400, "缺少 liked 参数");
+        }
+        var article = articleService.toggleLike(id, liked);
+        if (article == null) {
+            return Result.fail(404, "文章不存在");
+        }
+        return Result.ok(Map.of(
+            "viewCount", article.getViewCount(),
+            "likeCount", article.getLikeCount()
+        ));
+    }
 }

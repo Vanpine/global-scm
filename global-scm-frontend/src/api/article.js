@@ -19,3 +19,22 @@ export function getArticles(category) {
 export function getArticleDetail(id) {
   return request.get(`/articles/${id}`)
 }
+
+/**
+ * 递增文章阅读量
+ * @param {number} id 文章 ID
+ * @returns {Promise<{viewCount: number, likeCount: number}>}
+ */
+export function incrementArticleView(id) {
+  return request.post(`/articles/${id}/view`)
+}
+
+/**
+ * 点赞/取消点赞
+ * @param {number} id 文章 ID
+ * @param {boolean} liked true=点赞, false=取消
+ * @returns {Promise<{viewCount: number, likeCount: number}>}
+ */
+export function toggleArticleLike(id, liked) {
+  return request.post(`/articles/${id}/like`, { liked })
+}

@@ -37,4 +37,8 @@ public class Article {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private Integer viewCount;
+
+    private Integer likeCount;
 }

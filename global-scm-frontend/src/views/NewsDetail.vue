@@ -1,7 +1,8 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getArticleDetail, getArticles } from '@/api/article'
+import { getArticleDetail, getArticles, incrementArticleView, toggleArticleLike } from '@/api/article'
+import { useArticleInteraction } from '@/composables/useArticleInteraction'
 
 const route = useRoute()
 const article = ref(null)
@@ -9,6 +10,11 @@ const blocks = ref([])
 const tags = ref([])
 const related = ref([])
 const loading = ref(true)
+const viewCount = ref(0)
+const likeCount = ref(0)
+const liked = ref(false)
+
+const { hasViewedRecently, markViewed, isLiked, toggleLikeLocally } = useArticleInteraction()
 
 // 分类映射
 const CAT_MAP = {
@@ -43,11 +49,41 @@ async function loadArticle(id) {
     blocks.value = data.blocks || []
     tags.value = data.tags || []
     document.title = (article.value.title || '文章') + ' · 全球情报'
+
+    // 初始化计数（来自数据库）
+    viewCount.value = article.value.viewCount || 0
+    likeCount.value = article.value.likeCount || 0
+    // 从 localStorage 恢复点赞状态
+    liked.value = isLiked(article.value.id)
+
+    // 阅读去重：30 分钟内不重复计数
+    if (!hasViewedRecently(article.value.id)) {
+      const result = await incrementArticleView(article.value.id)
+      if (result) {
+        viewCount.value = result.viewCount
+        likeCount.value = result.likeCount
+      }
+      markViewed(article.value.id)
+    }
+
     // 加载同分类相关文章（取前 3 篇）
     const result = await getArticles(article.value.category) || {}
     related.value = (result.records || []).filter(a => a.id !== article.value.id).slice(0, 3)
   }
   loading.value = false
+}
+
+/**
+ * 点赞/取消点赞
+ */
+async function handleLike() {
+  if (!article.value) return
+  const newLiked = toggleLikeLocally(article.value.id)
+  liked.value = newLiked
+  const result = await toggleArticleLike(article.value.id, newLiked)
+  if (result) {
+    likeCount.value = result.likeCount
+  }
 }
 
 onMounted(() => loadArticle(route.params.id))
@@ -81,8 +117,8 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
           {{ article.meta }}
         </div>
         <div class="article-stats">
-          <span class="stat-item"><svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span class="view-count">0</span></span>
-          <button class="act-like-article"><svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> <span class="like-num">0</span></button>
+          <span class="stat-item"><svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> <span class="view-count">{{ viewCount }}</span></span>
+          <button class="act-like-article" :class="{ liked }" @click="handleLike"><svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> <span class="like-num">{{ likeCount }}</span></button>
         </div>
       </div>
     </header>

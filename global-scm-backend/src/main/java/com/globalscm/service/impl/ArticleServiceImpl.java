@@ -1,6 +1,7 @@
 package com.globalscm.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.globalscm.entity.pojo.Article;
 import com.globalscm.mapper.ArticleMapper;
 import com.globalscm.service.ArticleService;
@@ -39,6 +40,26 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article getById(Long id) {
+        return mapper.selectById(id);
+    }
+
+    @Override
+    public Article incrementViewCount(Long id) {
+        UpdateWrapper<Article> wrapper = new UpdateWrapper<>();
+        wrapper.setSql("view_count = view_count + 1").eq("id", id);
+        mapper.update(null, wrapper);
+        return mapper.selectById(id);
+    }
+
+    @Override
+    public Article toggleLike(Long id, boolean like) {
+        UpdateWrapper<Article> wrapper = new UpdateWrapper<>();
+        if (like) {
+            wrapper.setSql("like_count = like_count + 1").eq("id", id);
+        } else {
+            wrapper.setSql("like_count = GREATEST(like_count - 1, 0)").eq("id", id);
+        }
+        mapper.update(null, wrapper);
         return mapper.selectById(id);
     }
 }
