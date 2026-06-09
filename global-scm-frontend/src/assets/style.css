@@ -1247,3 +1247,48 @@ ul { list-style: none; }
   .section-title { font-size: 30px; }
   .cta-band h2 { font-size: 28px; }
 }
+
+/* ============================================================
+   全局 Toast
+   ============================================================ */
+.global-toast {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: linear-gradient(135deg, #e8f4fd 0%, #ffffff 100%);
+  color: var(--brand-blue);
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid rgba(0,113,227,0.15);
+  box-shadow: 0 8px 32px rgba(0,113,227,0.12);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.global-toast .toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Toast 过渡 */
+.toast-fade-enter-active { transition: all 0.3s var(--ease); }
+.toast-fade-leave-active { transition: all 0.25s var(--ease); }
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-12px);
+}
