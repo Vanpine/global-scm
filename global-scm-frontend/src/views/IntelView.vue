@@ -1,8 +1,10 @@
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue'
 import { getArticles } from '@/api/article'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useRouter } from 'vue-router'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 const router = useRouter()
 const loading = ref(true)
@@ -24,6 +26,170 @@ for (const cat of CAT_ORDER) {
 
 const { refresh: refreshReveal } = useScrollReveal()
 
+// ═══════════════════════════════════════════════════════
+// 2D Leaflet 地图 — GDACS 灾害 + USGS 地震
+// ═══════════════════════════════════════════════════════
+
+let mapInstance = null
+let disasterLayer = null
+let quakeLayer = null
+let tileLayer = null
+let mapTimer = null
+
+const darkMode = ref(false)
+
+const TILE_DARK  = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+const TILE_LIGHT = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+
+const GDACS_TYPE_ZH = { EQ: '地震', FL: '洪水', TC: '热带气旋', VO: '火山喷发', DR: '干旱', WF: '野火', TS: '海啸' }
+const USGS_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson'
+
+function gdacsLevel(alertLevel) {
+  if (alertLevel === 'Red') return 'high'
+  if (alertLevel === 'Orange') return 'watch'
+  return 'normal'
+}
+
+function magLevel(m) {
+  return m >= 6 ? 'high' : (m >= 4.5 ? 'watch' : 'normal')
+}
+
+// 风险等级 → 圆圈颜色
+const LEVEL_COLOR = { high: '#ff3b30', watch: '#ff9500', normal: '#34c759' }
+const LEVEL_RADIUS = { high: 9, watch: 7, normal: 5 }
+
+function makeCircleMarker(lat, lng, level, popupHtml) {
+  const color = LEVEL_COLOR[level] || LEVEL_COLOR.normal
+  const classes = level !== 'normal' ? 'pulse-marker pulse-' + level : ''
+  return L.circleMarker([lat, lng], {
+    radius: LEVEL_RADIUS[level] || 5,
+    fillColor: color,
+    color: '#fff',
+    weight: 1.5,
+    fillOpacity: 0.85,
+    className: classes,
+  }).bindTooltip(popupHtml, {
+    direction: 'top',
+    offset: [0, -8],
+    opacity: 0.92,
+    sticky: true,
+  })
+}
+
+// ── 拉取 GDACS 灾害数据 ──
+async function fetchGDACS() {
+  try {
+    const res = await fetch('/gdacs/xml/rss.xml')
+    const xmlText = await res.text()
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(xmlText, 'text/xml')
+    const geoNS = 'http://www.w3.org/2003/01/geo/wgs84_pos#'
+    const gdacsNS = 'http://www.gdacs.org'
+
+    const markers = []
+    doc.querySelectorAll('item').forEach(item => {
+      const eventType = item.getElementsByTagNameNS(gdacsNS, 'eventtype')[0]?.textContent
+      if (!eventType || eventType === 'EQ') return
+
+      const pointEl = item.getElementsByTagNameNS(geoNS, 'Point')[0]
+      const latEl = pointEl?.getElementsByTagNameNS(geoNS, 'lat')[0]
+      const lngEl = pointEl?.getElementsByTagNameNS(geoNS, 'long')[0]
+      const lat = parseFloat(latEl?.textContent)
+      const lng = parseFloat(lngEl?.textContent)
+      if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) return
+
+      const alertLevel = item.getElementsByTagNameNS(gdacsNS, 'alertlevel')[0]?.textContent || 'Green'
+      const title = item.querySelector('title')?.textContent || ''
+      const country = item.getElementsByTagNameNS(gdacsNS, 'country')[0]?.textContent || ''
+      const typeZh = GDACS_TYPE_ZH[eventType] || eventType
+      const level = gdacsLevel(alertLevel)
+      const popup = `<b>${typeZh}</b><br>${title}<br><small>${country} · ${alertLevel}</small>`
+
+      markers.push(makeCircleMarker(lat, lng, level, popup))
+    })
+    return markers
+  } catch (e) {
+    console.warn('GDACS 灾害数据获取失败', e)
+    return []
+  }
+}
+
+// ── 拉取 USGS 地震数据 ──
+async function fetchUSGS() {
+  try {
+    const res = await fetch(USGS_URL)
+    const geo = await res.json()
+    return (geo.features || []).slice(0, 60).map(f => {
+      const [lng, lat] = f.geometry.coordinates
+      const mag = f.properties.mag || 0
+      const place = f.properties.place || ''
+      const level = magLevel(mag)
+      const popup = `<b>M${mag.toFixed(1)} 地震</b><br>${place}`
+      return makeCircleMarker(lat, lng, level, popup)
+    })
+  } catch (e) {
+    console.warn('USGS 地震数据获取失败', e)
+    return []
+  }
+}
+
+// ── 刷新地图数据 ──
+async function refreshMap() {
+  if (!mapInstance) return
+  const [disasters, quakes] = await Promise.all([fetchGDACS(), fetchUSGS()])
+  if (disasterLayer) mapInstance.removeLayer(disasterLayer)
+  if (quakeLayer) mapInstance.removeLayer(quakeLayer)
+  disasterLayer = L.layerGroup(disasters).addTo(mapInstance)
+  quakeLayer = L.layerGroup(quakes).addTo(mapInstance)
+}
+
+// ── 初始化地图 ──
+function initMap() {
+  const el = document.getElementById('riskLeaflet')
+  if (!el) return
+  mapInstance = L.map(el, {
+    center: [20, 0],
+    zoom: 2,
+    minZoom: 2,
+    maxZoom: 12,
+    maxBounds: [[-85, -180], [85, 180]],
+    maxBoundsViscosity: 0.8,
+    zoomControl: true,
+    attributionControl: false,
+    scrollWheelZoom: true,
+    worldCopyJump: true,
+  })
+
+  // 地图瓦片（默认暗色）
+  tileLayer = L.tileLayer(darkMode.value ? TILE_DARK : TILE_LIGHT, {
+    maxZoom: 18,
+    noWrap: false,
+  }).addTo(mapInstance)
+
+  refreshMap()
+  mapTimer = setInterval(refreshMap, 60000)
+}
+
+function toggleMapTheme() {
+  if (!tileLayer || !mapInstance) return
+  darkMode.value = !darkMode.value
+  mapInstance.removeLayer(tileLayer)
+  tileLayer = L.tileLayer(darkMode.value ? TILE_DARK : TILE_LIGHT, {
+    maxZoom: 18,
+    noWrap: false,
+  }).addTo(mapInstance)
+}
+
+function destroyMap() {
+  clearInterval(mapTimer)
+  if (mapInstance) {
+    mapInstance.remove()
+    mapInstance = null
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+
 onMounted(async () => {
   const promises = CAT_ORDER.map(async cat => {
     const result = await getArticles(cat)
@@ -35,6 +201,11 @@ onMounted(async () => {
   loading.value = false
   await nextTick()
   refreshReveal()
+  initMap()
+})
+
+onUnmounted(() => {
+  destroyMap()
 })
 </script>
 
@@ -94,19 +265,22 @@ onMounted(async () => {
   <section class="section" style="padding-top:56px;">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:48px;">
-        <div class="eyebrow">INTERACTIVE MAP · 区域态势</div>
-        <h2 class="section-title">可缩放的全球风险地图</h2>
-        <p class="section-sub">放大任意区域，查看港口、航线与高危事件的分布细节。滚轮缩放、拖动平移、点击标记查看详情。</p>
+        <div class="eyebrow">RISK HEATMAP · 实时态势感知</div>
+        <h2 class="section-title">全球供应链风险热力图</h2>
+        <p class="section-sub">GDACS 灾害事件与 USGS 地震数据实时叠加，高危区域自动脉冲预警。滚轮缩放、拖动探索、悬停标记查看详情。</p>
       </div>
       <div class="leaflet-wrap reveal">
         <div id="riskLeaflet"></div>
+        <button class="map-theme-btn" @click="toggleMapTheme" :title="darkMode ? '切换白天模式' : '切换黑夜模式'">
+          {{ darkMode ? '🌙' : '☀️' }}
+        </button>
         <div class="map-legend">
           <span><i style="background:#ff3b30"></i>高危</span>
           <span><i style="background:#ff9500"></i>关注</span>
           <span><i style="background:#34c759"></i>正常</span>
         </div>
       </div>
-      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">* 供应链风险点为演示数据；全球地震为 USGS 实时数据（纯前端直连，每 60 秒自动刷新）。</p>
+      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">* 灾害数据源自 GDACS 全球灾害预警系统，地震数据源自 USGS 美国地质调查局，每 60 秒自动刷新。</p>
     </div>
   </section>
 </template>

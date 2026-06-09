@@ -819,6 +819,17 @@ ul { list-style: none; }
 /* 可缩放世界地图（Leaflet） */
 .leaflet-wrap { position: relative; border-radius: 22px; overflow: hidden; border: 1px solid var(--card-border); box-shadow: var(--card-shadow-hover); }
 #riskLeaflet { height: 540px; width: 100%; background: #0a0e1a; }
+.map-theme-btn {
+  position: absolute; top: 14px; right: 14px; z-index: 1000;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25); background: rgba(16,22,39,0.85);
+  font-size: 16px; cursor: pointer; display: grid; place-items: center;
+  transition: all 0.25s var(--ease); backdrop-filter: blur(8px);
+}
+.map-theme-btn:hover {
+  background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.45);
+  transform: scale(1.08);
+}
 .leaflet-wrap .map-legend {
   position: absolute; left: 14px; bottom: 14px; z-index: 600; display: flex; gap: 16px;
   background: rgba(10,14,26,0.72); border: 1px solid rgba(108,178,255,0.22);
@@ -862,6 +873,23 @@ ul { list-style: none; }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #101627; color: #eef0f4; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
 .leaflet-popup-content { font-size: 13.5px; line-height: 1.5; }
 .leaflet-container a.leaflet-popup-close-button { color: #9aa3b2; }
+
+/* 2D 地图圆圈呼吸动画 */
+.pulse-marker {
+  animation: pulse-watch 2s ease-in-out infinite;
+}
+.pulse-marker.pulse-high {
+  animation-name: pulse-high;
+  animation-duration: 1.2s;
+}
+@keyframes pulse-watch {
+  0%, 100% { stroke-width: 1.5; stroke-opacity: 1; }
+  50% { stroke-width: 5; stroke-opacity: 0.35; }
+}
+@keyframes pulse-high {
+  0%, 100% { stroke-width: 1.5; stroke-opacity: 1; }
+  50% { stroke-width: 10; stroke-opacity: 0.15; }
+}
 
 .tower-wrap { position: relative; border-radius: 22px; overflow: hidden; box-shadow: var(--card-shadow-hover); }
 .tower-wrap img { width: 100%; height: auto; display: block; }

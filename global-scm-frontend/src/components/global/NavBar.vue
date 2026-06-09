@@ -26,6 +26,11 @@ function toggleMenu() {
 function closeMenu() {
   menuOpen.value = false
 }
+
+function navigate(link) {
+  closeMenu()
+  router.push(link.to)
+}
 </script>
 
 <template>
@@ -40,7 +45,7 @@ function closeMenu() {
           :key="link.to"
           :href="link.to"
           :class="{ active: isActive(link.to) }"
-          @click.prevent="router.push(link.to); closeMenu()"
+          @click.prevent="navigate(link)"
         >{{ link.label }}</a>
       </nav>
       <div class="nav-right">

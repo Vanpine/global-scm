@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/assets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/assets/style.css" afterDir="false" />
-    </list>
+    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +33,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.Application.executor": "Run",
     "Spring Boot.ScmApplication.executor": "Run",
-    "git-widget-placeholder": "like",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
