@@ -1,12 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 
 const sections = ref([])
 
 onMounted(async () => {
   sections.value = await getPageSections('pain-points') || []
+  await nextTick()
+  refreshReveal()
 })
+
+const { refresh: refreshReveal } = useScrollReveal()
 
 function findSection(code) {
   return sections.value.find(s => s.section === code)

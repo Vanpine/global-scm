@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { submitContact } from '@/api/contact'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 import ContactForm from '@/components/contact/ContactForm.vue'
 
 const sections = ref([])
@@ -24,7 +25,11 @@ onMounted(async () => {
   sections.value = data || []
   heroSection.value = sections.value.find(s => s.section === 'hero')
   officesSection.value = sections.value.find(s => s.section === 'offices')
+  await nextTick()
+  refreshReveal()
 })
+
+const { refresh: refreshReveal } = useScrollReveal()
 
 async function handleSubmit() {
   submitting.value = true
