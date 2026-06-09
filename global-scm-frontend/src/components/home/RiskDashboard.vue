@@ -12,7 +12,7 @@
  *     └── RiskFeed  — 右侧地震快讯面板（inject 数据后列表展示）
  */
 
-import { ref, onMounted, onUnmounted, provide } from 'vue'
+import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
 import Globe3D from './Globe3D.vue'
 import RiskFeed from './RiskFeed.vue'
 
@@ -43,6 +43,97 @@ function gdacsLevel(alertLevel) {
 }
 
 const disasterPoints = ref([])  // GDACS 实时灾害数据（直接提供给 Globe3D 作为 riskPoints）
+
+// ═══════════════════════════════════════════════════════
+// 二、全球主要贸易航线（路径固定，颜色动态响应灾害）
+// ═══════════════════════════════════════════════════════
+
+// 7 条核心供应链航线（起点 → 终点 + 默认渐变色）
+const ARCS = [
+  { startLat: 31.23, startLng: 121.47, endLat: 33.75, endLng: -118.19, name: '上海→洛杉矶' },     // 跨太平洋
+  { startLat: 31.23, startLng: 121.47, endLat: 53.55, endLng: 9.99,    name: '上海→汉堡' },       // 苏伊士航线
+  { startLat: 1.29,  startLng: 103.85, endLat: 51.95, endLng: 4.4,     name: '新加坡→鹿特丹' },   // 马六甲-苏伊士
+  { startLat: 31.23, startLng: 121.47, endLat: 1.29,  endLng: 103.85,  name: '上海→新加坡' },     // 亚太支线
+  { startLat: 25.27, startLng: 55.30,  endLat: 53.55, endLng: 9.99,    name: '迪拜→汉堡' },       // 中东→欧洲
+  { startLat: 35.10, startLng: 129.03, endLat: 33.75, endLng: -118.19, name: '釜山→洛杉矶' },     // 韩美航线
+  { startLat: 29.75, startLng: -95.35, endLat: 51.95, endLng: 4.4,     name: '休斯顿→鹿特丹' },   // 跨大西洋
+]
+
+// 枢纽港口：航线的起止点去重后作为地球上的核心节点标注
+const HUB_PORTS = [
+  { lat: 31.23, lng: 121.47, zh: '上海港', en: 'Shanghai' },
+  { lat: 33.75, lng: -118.19, zh: '洛杉矶港', en: 'Los Angeles' },
+  { lat: 53.55, lng: 9.99, zh: '汉堡港', en: 'Hamburg' },
+  { lat: 1.29, lng: 103.85, zh: '新加坡港', en: 'Singapore' },
+  { lat: 51.95, lng: 4.4, zh: '鹿特丹港', en: 'Rotterdam' },
+  { lat: 25.27, lng: 55.30, zh: '迪拜港', en: 'Dubai' },
+  { lat: 35.10, lng: 129.03, zh: '釜山港', en: 'Busan' },
+  { lat: 29.75, lng: -95.35, zh: '休斯顿港', en: 'Houston' },
+]
+
+// Haversine 球面距离（km）
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+// 大圆弧插值：沿航线等距采样 5 个点，用于灾害邻近检测
+function sampleGreatCircle(lat1, lng1, lat2, lng2, n = 5) {
+  const points = []
+  for (let i = 0; i <= n; i++) {
+    const t = i / n
+    // slerp 在单位球面上插值
+    const φ1 = lat1 * Math.PI / 180, λ1 = lng1 * Math.PI / 180
+    const φ2 = lat2 * Math.PI / 180, λ2 = lng2 * Math.PI / 180
+    const x1 = Math.cos(φ1) * Math.cos(λ1), y1 = Math.cos(φ1) * Math.sin(λ1), z1 = Math.sin(φ1)
+    const x2 = Math.cos(φ2) * Math.cos(λ2), y2 = Math.cos(φ2) * Math.sin(λ2), z2 = Math.sin(φ2)
+    const dot = x1 * x2 + y1 * y2 + z1 * z2
+    const omega = Math.acos(Math.min(1, Math.max(-1, dot)))
+    if (Math.abs(omega) < 1e-10) { points.push({ lat: lat1, lng: lng1 }); continue }
+    const sinO = Math.sin(omega)
+    const a = Math.sin((1 - t) * omega) / sinO
+    const b = Math.sin(t * omega) / sinO
+    const x = a * x1 + b * x2, y = a * y1 + b * y2, z = a * z1 + b * z2
+    points.push({
+      lat: Math.atan2(z, Math.sqrt(x * x + y * y)) * 180 / Math.PI,
+      lng: Math.atan2(y, x) * 180 / Math.PI,
+    })
+  }
+  return points
+}
+
+// 检测航线是否被灾害影响：沿航线采样点，任一灾害在阈值内则命中
+const AFFECT_KM = 1200  // 影响半径（公里）
+
+function arcAffectedLevel(arc, disasters) {
+  const samples = sampleGreatCircle(arc.startLat, arc.startLng, arc.endLat, arc.endLng, 5)
+  let worst = 'normal'
+  for (const d of disasters) {
+    for (const s of samples) {
+      if (haversineKm(s.lat, s.lng, d.lat, d.lng) < AFFECT_KM) {
+        if (d.level === 'high') return 'high'
+        if (d.level === 'watch') worst = 'watch'
+      }
+    }
+  }
+  return worst
+}
+
+// 动态航线：默认蓝色，途经灾害区域自动变色
+const dynamicArcs = computed(() => {
+  const disasters = disasterPoints.value
+  return ARCS.map(arc => {
+    const level = disasters.length ? arcAffectedLevel(arc, disasters) : 'normal'
+    if (level === 'high')   return { ...arc, color: ['#ff3b30', '#ff3b30'] }  // 红色：高危灾害经过
+    if (level === 'watch')  return { ...arc, color: ['#ff9500', '#ff9500'] }  // 橙色：关注级灾害
+    return { ...arc, color: ['#2997ff', '#5e5ce6'] }                          // 蓝色：畅通
+  })
+})
 
 // ═══════════════════════════════════════════════════════
 // 三、USGS 实时地震数据（纯前端 fetch，每 60 秒刷新）
@@ -169,7 +260,8 @@ async function fetchGDACS() {
 // 三、依赖注入：将数据下发给所有子组件
 // ═══════════════════════════════════════════════════════
 provide('riskPoints', disasterPoints)   // GDACS 动态灾害数据（ref 响应式）
-
+provide('riskArcs', dynamicArcs)       // 航线（颜色随灾害动态变化）
+provide('hubPorts', HUB_PORTS)         // 枢纽港口标注
 provide('quakePoints', quakePoints)   // 响应式 ref，子组件能感知数据变化
 provide('liveOK', liveOK)
 provide('lastUpdated', lastUpdated)

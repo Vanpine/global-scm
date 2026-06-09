@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/components/home/RiskDashboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/components/home/RiskDashboard.vue" afterDir="false" />
-    </list>
+    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,7 +66,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1780901638397</updated>
-      <workItem from="1780901640591" duration="10264000" />
+      <workItem from="1780901640591" duration="10404000" />
     </task>
     <servers />
   </component>

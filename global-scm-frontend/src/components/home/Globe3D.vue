@@ -25,7 +25,8 @@ import { ref, onMounted, onUnmounted, inject, watch } from 'vue'
 // inject(key, 默认值)  —— Vue3 的依赖注入，类似 React 的 Context
 // 父组件 RiskDashboard 通过 provide() 提供这些数据
 const riskPoints = inject('riskPoints', ref([]))  // GDACS 实时灾害点（响应式 ref）
-
+const riskArcs   = inject('riskArcs', ref([]))   // 航线弧线（ComputedRef，颜色随灾害动态变化）
+const hubPorts    = inject('hubPorts', [])          // 枢纽港口标注（静态）
 const quakePoints = inject('quakePoints', ref([])) // USGS 地震点（响应式 ref）
 
 // ── 颜色 & 高度映射 ──────────────────────────────────
@@ -94,6 +95,22 @@ function initGlobe() {
       d.zh + '</div>'
     )
 
+    // ── 航线弧线（默认蓝，途经灾害区域自动变红/橙）──
+    .arcsData(riskArcs.value)
+    .arcColor('color')
+    .arcStroke(0.7)
+    .arcDashLength(0.6).arcDashGap(0.25)
+    .arcDashAnimateTime(1800)
+    .arcAltitudeAutoScale(0.45)
+
+    // ── 枢纽港口文字标注（航线起止点）──────────────
+    .labelsData(hubPorts)
+    .labelLat('lat').labelLng('lng')
+    .labelText(d => d.en)
+    .labelSize(1.1).labelDotRadius(0.35)
+    .labelColor(() => 'rgba(180,210,255,0.85)')
+    .labelResolution(3)
+
     // ── 脉冲圈（高危/关注区域向外扩散涟漪）──────────
     .ringsData(riskPoints.value.filter(d => d.level !== 'normal'))
     .ringColor(d => { const c = COLORS[d.level]; return t => hexToRgba(c, 1 - t) })
@@ -139,13 +156,14 @@ function resize() {
 function refreshGlobe() {
   if (globeWorld) {
     const all = allPoints()
-    globeWorld.pointsData(all)                          // 更新全部点
-    globeWorld.ringsData(all.filter(d => d.level !== 'normal'))  // 更新脉冲圈
+    globeWorld.pointsData(all)
+    globeWorld.ringsData(all.filter(d => d.level !== 'normal'))
+    globeWorld.arcsData(riskArcs.value)  // 航线颜色随灾害动态更新
   }
 }
 
 // watch: 监听 quakePoints 和 riskPoints 变化，数据更新时自动刷新地球
-watch([quakePoints, riskPoints], () => {
+watch([quakePoints, riskPoints, riskArcs], () => {
   refreshGlobe()
 }, { deep: true })
 
