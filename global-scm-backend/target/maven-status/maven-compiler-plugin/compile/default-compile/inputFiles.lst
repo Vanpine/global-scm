@@ -11,7 +11,6 @@ C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\g
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\service\ArticleTagService.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\entity\pojo\ArticleBlock.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\entity\pojo\Article.java
-C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\ScmApplication.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\entity\pojo\ArticleTag.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\controller\ArticleController.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\config\MyBatisPlusConfig.java
@@ -36,6 +35,7 @@ C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\g
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\entity\dto\Result.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\service\HomeCrisisCardService.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\controller\PageController.java
+C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\Application.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\service\HomeHeroService.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\service\ArticleBlockService.java
 C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\src\main\java\com\globalscm\mapper\HomeCarouselMapper.java

@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * 文章业务实现
- * 只对外暴露 status=published 的文章，保证草稿和归档文章不可见
  */
 @Service
 @RequiredArgsConstructor
@@ -19,9 +18,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleMapper mapper;
 
-    /**
-     * 查询所有已发布文章，按发布时间倒序（最新的在前）
-     */
     @Override
     public List<Article> listAll() {
         return mapper.selectList(
@@ -31,10 +27,6 @@ public class ArticleServiceImpl implements ArticleService {
         );
     }
 
-    /**
-     * 按分类筛选已发布文章
-     * 分类包括 war（战争）、logi（物流）、energy（能源）、policy（政策）
-     */
     @Override
     public List<Article> listByCategory(String category) {
         return mapper.selectList(
@@ -45,9 +37,6 @@ public class ArticleServiceImpl implements ArticleService {
         );
     }
 
-    /**
-     * 按主键 ID 查询文章，不做状态过滤（管理后台需要查看草稿和归档）
-     */
     @Override
     public Article getById(Long id) {
         return mapper.selectById(id);
