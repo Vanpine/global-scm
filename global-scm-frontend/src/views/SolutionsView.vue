@@ -5,114 +5,8 @@ import { useScrollReveal } from '@/composables/useScrollReveal'
 
 const sections = ref([])
 
-// ── 蓝图默认数据（API 不可用时回退） ──────────────────
-const DEFAULTS = [
-  {
-    section: 'hero',
-    subtitle: '每个企业的供应链都不一样，方案也不该一样',
-    itemsJson: JSON.stringify([
-      { icon: 'globe', text: '跨境采购' },
-      { icon: 'warehouse', text: '海外仓' },
-      { icon: 'send', text: '一件代发' },
-      { icon: 'shuffle', text: '分销网络' },
-    ]),
-  },
-  {
-    section: 'scenarios',
-    itemsJson: JSON.stringify([
-      {
-        id: 'procure', tag: '跨境采购', tagClass: 'procure',
-        title: '从寻源到 PO 签发，全程在系统里跑',
-        desc: '不是找不到供应商，是不知道哪个靠谱、不确定关税会怎么变。多源比价 + 关税沙盘推演 + 自动跟单，PO 周期从 3–5 天缩至 1 天内。',
-        items: ['多源寻源，自动追踪供应商准时率与质量', '关税 TCO 沙盘推演，报价背后费用全透明', '快反补货，需求信号直达采购决策'],
-      },
-      {
-        id: 'overseas', tag: '海外仓', tagClass: 'overseas',
-        title: '多仓库存一盘棋，AI 告诉你该放哪、补多少',
-        desc: '国内仓、海外仓、FBA、保税仓统一库存视图，AI 动态分配水位。放多了压资金，放少了断货——找到最优平衡点。',
-        items: ['多仓网络统一视图，库存水位一目了然', 'FBA 智能补货建议，避免断货与冗余', '头程尾程全链路追踪，异常提前告警'],
-      },
-      {
-        id: 'dropship', tag: '一件代发', tagClass: 'dropship',
-        title: '零仓储测出爆款，跑通了再备货',
-        desc: '新品测款、长尾 SKU、小批量试水——不是所有货都值得先囤到海外。包裹从国内仓直发消费者，自动匹配最优申报模式，试错成本降到最低。',
-        items: ['小包直邮，自动匹配 9610/9710/9810 模式', '全程轨迹追踪，消费者端透明可见', '测款数据回传，指导备货决策'],
-      },
-      {
-        id: 'distribution', tag: '分销网络', tagClass: 'distribution',
-        title: '供销双方智能撮合，自动分账不扯皮',
-        desc: '有好货的缺渠道，有渠道的缺好货。供销商上架分销池，分销商零库存选品，订单完成自动按比分账，一个人管 100+ 分销商不费力。',
-        items: ['双边撮合，供需智能匹配', '订单完成自动分账，告别手工对账', '分销等级 + 窜货监控，渠道秩序可控'],
-      },
-    ]),
-  },
-  {
-    section: 'fulfillment',
-    itemsJson: JSON.stringify([
-      { title: 'FBA 履约', sub: 'Amazon Fulfillment', desc: '商品存 Amazon FBA 仓，全托管拣货配送。适合 Prime 标商品，平台做库存视图与补货决策。' },
-      { title: '第三方海外仓', sub: '3PL Warehouse', desc: '多平台统一库存发货，商家自管尾程。平台负责运单创建、比价、轨迹追踪与 POD 回传。' },
-      { title: '直邮 FBS/FBM', sub: 'Direct Mail', desc: '国内仓直发国际快递至海外消费者。适合小件、低频、长尾 SKU 与测试期新品。' },
-      { title: '保税备货', sub: 'Bonded Warehouse', desc: '批量入境内保税仓，下单后清关发货。1–3 天妥投，单件物流成本比直邮低 30–40%。' },
-    ]),
-  },
-  {
-    section: 'stages',
-    itemsJson: JSON.stringify([
-      {
-        title: '初创试水期', sub: '月单量 < 2,000 · SKU 多而散',
-        desc: '国内仓直邮 + 少量 FBA 试款，用最小成本测出真实需求，再决定加码方向。',
-        tags: ['直邮为主', '小批量试款', '需求验证'],
-      },
-      {
-        title: '增长扩张期', sub: '月单量 2,000–20,000 · 爆款显现',
-        desc: 'FBA 保 Prime 时效 + 海外仓压成本，双仓并行，AI 需求预测驱动补货节奏。',
-        tags: ['FBA + 海外仓', '智能补货', '防断货积压'],
-      },
-      {
-        title: '成熟规模期', sub: '月单量 > 20,000 · 多区域多渠道',
-        desc: '多国区域仓 + 多源供应 + 弹性路由，构建韧性网络，控制塔做全局最优决策。',
-        tags: ['区域仓网络', '多源采购', '控制塔'],
-      },
-    ]),
-  },
-  {
-    section: 'perspectives',
-    itemsJson: JSON.stringify([
-      { title: '不建议过度依赖 FBA', desc: 'FBA 时效有优势，但平台规则、仓储费与封号风险都不在自己手中。把核心库存放在自有 / 海外仓，用 FBA 承接 Prime 流量，主动权更可控。' },
-      { title: '库存不是越少越好', desc: '盲目压库存，是用断货换"账面好看"。真正该优化的是「服务水平 vs 持有成本」的平衡点——这正是动态安全库存模型存在的意义。' },
-      { title: '直邮的价值常被低估', desc: '不少人把直邮当低端备选，其实它是低成本的试款方式：零仓储、上架快、下架快。新品先用直邮验证，跑通后再海运备货，可有效降低试错成本。' },
-      { title: '韧性正变得和效率一样重要', desc: '过去十年供应链追求极致效率，但一次断链就可能让全盘受损。后疫情时代，能否在扰动中快速重组，正变得和效率同样关键。' },
-    ]),
-  },
-  {
-    section: 'outcomes',
-    itemsJson: JSON.stringify([
-      { stat: '70% → 93%', sub: '采购准时交付率', desc: '通过多源采购 + AI 需求预测，缓解单一供应商依赖问题。', scene: '典型场景 · 跨境品牌商' },
-      { stat: '90 → 55 天', sub: '库存周转天数', desc: '智能补货 + 动态安全库存策略，降低呆滞库存占比。', scene: '典型场景 · 海外仓运营商' },
-      { stat: '2–5 天 → 4 小时', sub: '异常事件响应时间', desc: '实时轨迹追踪 + 自动异常预警，从被动应对到主动管控。', scene: '典型场景 · 跨境物流商' },
-    ]),
-  },
-  { section: 'cta' },
-]
-
-function mergeWithDefaults(apiSections) {
-  const list = apiSections || []
-  return DEFAULTS.map(def => {
-    const api = list.find(s => s.section === def.section)
-    if (!api) return def
-    // API 有数据则用 API，否则用默认值
-    return {
-      ...def,
-      ...api,
-      itemsJson: api.itemsJson || def.itemsJson,
-      subtitle: api.subtitle || def.subtitle,
-    }
-  })
-}
-
 onMounted(async () => {
-  const apiData = await getPageSections('solutions')
-  sections.value = mergeWithDefaults(apiData)
+  sections.value = await getPageSections('solutions') || []
   await nextTick()
   refreshReveal()
 })
@@ -135,22 +29,14 @@ const HERO_ICONS = {
   shuffle: `<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>`,
 }
 
-// ── 场景图片 ──────────────────────────────────────
-const SCENE_IMGS = [
-  'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1400&q=85',
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&q=85',
-  'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1400&q=85',
-  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85',
-]
-
-// ── 成长阶段图标 ──────────────────────────────────
+// ── 成长阶段图标映射 ──────────────────────────────────
 const STAGE_ICONS = [
   `<path d="M7 17h10"/><path d="M12 17v4"/><path d="M12 7a5 5 0 0 0-5 5c0 3 2 5 5 7 3-2 5-4 5-7a5 5 0 0 0-5-5z"/><path d="M8 8c1-2 3-4 4-4s3 2 4 4"/>`,
   `<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>`,
   `<path d="M8 3l4 8 5-5 5 15H2L8 3z"/>`,
 ]
 
-// ── 观点图标 ──────────────────────────────────────
+// ── 观点图标映射 ──────────────────────────────────────
 const PERSPECTIVE_ICONS = [
   `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
   `<line x1="3" y1="6" x2="21" y2="6"/><path d="M3 6l3 14h12l3-14"/><line x1="12" y1="6" x2="12" y2="20"/><circle cx="7" cy="15" r="3"/><circle cx="17" cy="15" r="3"/>`,
@@ -181,16 +67,16 @@ const PERSPECTIVE_ICONS = [
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:140px;">
         <div class="eyebrow">FOUR SCENARIOS · 四大场景</div>
-        <h2 class="section-title">按你的业务场景，<span class="gradient-text">找到对应方案</span></h2>
-        <p class="section-sub">不做大一统推荐，每个场景都有具体的落地路径。</p>
+        <h2 class="section-title">{{ findSection('scenarios').title || '按你的业务场景，找到对应方案' }}</h2>
+        <p class="section-sub">{{ findSection('scenarios').subtitle || '不做大一统推荐，每个场景都有具体的落地路径。' }}</p>
       </div>
       <div class="solutions-featured">
         <article class="solution-card-wide reveal" v-for="(sc, i) in parseItems(findSection('scenarios').itemsJson)" :key="i" :id="sc.id">
           <div class="scw-img">
-            <img :src="SCENE_IMGS[i] || sc.img" alt="" loading="lazy" onerror="this.style.display='none'">
+            <img :src="sc.img" alt="" loading="lazy" onerror="this.style.display='none'">
           </div>
           <div class="scw-body">
-            <span :class="'scw-tag tag-' + sc.tagClass.replace('tag-', '')">{{ sc.tag }}</span>
+            <span :class="'scw-tag tag-' + (sc.tagClass || '').replace('tag-', '')">{{ sc.tag }}</span>
             <h3>{{ sc.title }}</h3>
             <p class="scw-desc">{{ sc.desc }}</p>
             <ul><li v-for="(it, j) in sc.items" :key="j">{{ it }}</li></ul>
@@ -205,8 +91,8 @@ const PERSPECTIVE_ICONS = [
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
         <div class="eyebrow">FULFILLMENT</div>
-        <h2 class="section-title">四种履约通道，<span class="gradient-text">OMS 自动匹配最优</span></h2>
-        <p class="section-sub">系统根据库存位置、渠道 SLA、物流成本与目的国，自动匹配最优通道。</p>
+        <h2 class="section-title">{{ findSection('fulfillment').title || '四种履约通道，OMS 自动匹配最优' }}</h2>
+        <p class="section-sub">{{ findSection('fulfillment').subtitle || '系统根据库存位置、渠道 SLA、物流成本与目的国，自动匹配最优通道。' }}</p>
       </div>
       <div class="grid grid-4">
         <div class="card reveal" v-for="(ch, i) in parseItems(findSection('fulfillment').itemsJson)" :key="i">
@@ -224,8 +110,8 @@ const PERSPECTIVE_ICONS = [
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
         <div class="eyebrow">HOW TO CHOOSE</div>
-        <h2 class="section-title">按成长阶段，选择适配组合</h2>
-        <p class="section-sub">没有放之四海皆准的方案。结合跨境企业的出口实践，我们把履约选型归纳为三个成长阶段（单量数字仅供参考）。</p>
+        <h2 class="section-title">{{ findSection('stages').title || '按成长阶段，选择适配组合' }}</h2>
+        <p class="section-sub">{{ findSection('stages').subtitle || '没有放之四海皆准的方案。结合跨境企业的出口实践，我们把履约选型归纳为三个成长阶段。' }}</p>
       </div>
       <div class="grid grid-3">
         <div class="card reveal" v-for="(st, i) in parseItems(findSection('stages').itemsJson).slice(0, 3)" :key="i">
@@ -238,18 +124,6 @@ const PERSPECTIVE_ICONS = [
           <div class="tags"><span v-for="(t, j) in st.tags" :key="j">{{ t }}</span></div>
         </div>
       </div>
-      <!-- 进口方向提示 -->
-      <div class="import-card reveal" style="margin-top:24px;">
-        <div class="icon">
-          <svg class="icon-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        </div>
-        <div>
-          <div class="eyebrow">IMPORT · 进口方向</div>
-          <h3>做进口？优先「保税备货」</h3>
-          <p>若你把海外品牌货卖给中国消费者，建议「保税仓批量备货 + 清单核放、汇总申报」：批量海运入境内保税仓，下单后单件清关发货，1–3 天极速妥投、单件物流成本比直邮低 30–40%，适合奶粉、美妆、母婴等高复购品类；小众长尾则用 9610 直邮测款。</p>
-          <div class="tags"><span>保税仓备货</span><span>清单核放</span><span>9610 直邮测款</span></div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -258,8 +132,8 @@ const PERSPECTIVE_ICONS = [
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
         <div class="eyebrow">OUR PERSPECTIVE</div>
-        <h2 class="section-title">关于跨境供应链的几点观点</h2>
-        <p class="section-sub">并非每条"行业常识"都成立。以下是我们结合实践，对几个常见问题的看法。</p>
+        <h2 class="section-title">{{ findSection('perspectives').title || '关于跨境供应链的几点观点' }}</h2>
+        <p class="section-sub">{{ findSection('perspectives').subtitle || '并非每条"行业常识"都成立。以下是我们结合实践，对几个常见问题的看法。' }}</p>
       </div>
       <div class="grid grid-2">
         <div class="card reveal" v-for="(pv, i) in parseItems(findSection('perspectives').itemsJson)" :key="i">
@@ -278,8 +152,8 @@ const PERSPECTIVE_ICONS = [
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
         <div class="eyebrow">TARGET OUTCOMES · 目标成效</div>
-        <h2 class="section-title">典型场景下的目标成效</h2>
-        <p class="section-sub">以下为典型业务场景的目标改善示意，帮助你预估价值，非特定客户真实数据。</p>
+        <h2 class="section-title">{{ findSection('outcomes').title || '典型场景下的目标成效' }}</h2>
+        <p class="section-sub">{{ findSection('outcomes').subtitle || '以下为典型业务场景的目标改善示意，帮助你预估价值，非特定客户真实数据。' }}</p>
       </div>
       <div class="grid grid-3">
         <div class="card reveal" v-for="(oc, i) in parseItems(findSection('outcomes').itemsJson)" :key="i">
@@ -295,8 +169,8 @@ const PERSPECTIVE_ICONS = [
   <!-- ═══ CTA ═══ -->
   <section class="section" v-if="findSection('cta')">
     <div class="container text-center reveal">
-      <h2 class="section-title">想了解这些场景<span class="gradient-text">背后的行业挑战？</span></h2>
-      <p class="section-sub" style="margin-bottom:24px;">每个业务场景背后，都是地缘、政策、供需等宏观挑战在驱动。看清全局，方案才落得住。</p>
+      <h2 class="section-title">{{ findSection('cta').title || '想了解这些场景背后的行业挑战？' }}</h2>
+      <p class="section-sub" style="margin-bottom:24px;">{{ findSection('cta').subtitle || '每个业务场景背后，都是地缘、政策、供需等宏观挑战在驱动。看清全局，方案才落得住。' }}</p>
       <a class="btn btn-ghost btn-lg" href="/pain-points">查看八大痛点与对策 →</a>
     </div>
   </section>
