@@ -20,48 +20,123 @@ function findSection(code) {
 function parseItems(json) {
   try { return JSON.parse(json || '[]') } catch { return [] }
 }
+
+// ── Hero 标签图标映射 ──────────────────────────────
+const HERO_ICONS = {
+  globe: `<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+  list:  `<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>`,
+  chart: `<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>`,
+  link:  `<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>`,
+}
+
+// ── 预览卡片图标映射 ──────────────────────────────
+const PREVIEW_ICONS = {
+  globe:        `<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+  chart:        `<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>`,
+  'dollar-sign':`<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>`,
+  clock:        `<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+}
+
+// ── 大脑模型图标 ──────────────────────────────────
+const BRAIN_ICONS = [
+  `<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="12" x2="16" y2="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="20" y1="12" x2="18" y2="12"/>`,
+  `<path d="M6.5 22h11"/><path d="M12 22V8"/><path d="M16 6a4 4 0 0 0-8 0c0 4 4 6 4 6s4-2 4-6z"/><circle cx="12" cy="6" r="2"/><path d="M10 2h4"/>`,
+  `<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>`,
+  `<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>`,
+]
 </script>
 
 <template>
-  <!-- Hero -->
-  <section class="hero" style="min-height:60vh; height:auto; padding:120px 0 80px;" v-if="findSection('hero')">
-    <img class="hero-video" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920&q=85" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none">
+  <!-- ═══ Hero：全屏图片背景 ═══ -->
+  <section class="hero" style="min-height:100vh; height:100vh;" v-if="findSection('hero')">
+    <img class="hero-video" src="https://images.unsplash.com/photo-1624969862644-791f3dc98927?auto=format&fit=crop&w=1920&q=90" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>{{ findSection('hero').title }}</h1>
+      <h1>供应链的<span>八道坎</span></h1>
       <p class="lead">{{ findSection('hero').subtitle }}</p>
       <p class="hero-sub">
         <span v-for="(item, i) in parseItems(findSection('hero').itemsJson)" :key="i">
-          <svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+          <svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" v-html="HERO_ICONS[item.icon] || ''"></svg>
           {{ item.text }}
         </span>
       </p>
     </div>
   </section>
 
-  <!-- 痛点预览 -->
-  <section class="section" v-if="findSection('preview')">
+  <!-- ═══ 痛点共鸣（四张卡片速览） ═══ -->
+  <section class="section-sm bg-gray" style="padding-top:100px; padding-bottom:100px;" v-if="findSection('preview')">
     <div class="container">
-      <div class="text-center reveal" style="margin-bottom:48px;">
+      <div class="text-center reveal" style="margin-bottom:64px;">
+        <div class="eyebrow">SOUND FAMILIAR? · 你是否也遇到</div>
         <h2 class="section-title">{{ findSection('preview').title }}</h2>
         <p class="section-sub">{{ findSection('preview').subtitle }}</p>
       </div>
-      <div class="grid grid-2">
+      <div class="grid grid-4">
         <div class="card reveal" v-for="(pp, i) in parseItems(findSection('preview').itemsJson)" :key="i">
-          <div class="icon"><svg class="icon-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div>
-          <h3>{{ pp.title }} <span style="font-weight:400;font-size:14px;color:var(--muted);">· {{ pp.sub }}</span></h3>
-          <p style="font-size:14px;color:var(--muted);margin-top:8px;">{{ pp.desc }}</p>
+          <div class="icon">
+            <svg class="icon-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" v-html="PREVIEW_ICONS[pp.icon] || ''"></svg>
+          </div>
+          <h3>{{ pp.title }}</h3>
+          <div class="sub-cn">{{ pp.sub }}</div>
+          <p>{{ pp.desc }}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 八大痛点详细内容（从原站 HTML 迁移，此处用占位） -->
-  <section class="section bg-gray">
+  <!-- ═══ 八大痛点详解 ═══ -->
+  <section class="section" v-if="findSection('pain-points')">
     <div class="container">
-      <div class="text-center reveal" style="margin-bottom:40px;">
-        <h2 class="section-title">八大痛点，逐一拆解</h2>
-        <p class="section-sub">后续版本将从后端动态加载完整内容</p>
+      <div class="text-center reveal" style="margin-bottom:56px;">
+        <div class="eyebrow">8 PAIN POINTS · 八大痛点</div>
+        <h2 class="section-title">八道坎，<span class="gradient-text">逐一拆解</span></h2>
+        <p class="section-sub">{{ findSection('pain-points').subtitle }}</p>
+      </div>
+    </div>
+    <div class="pain-list">
+      <div class="painrow" v-for="(pp, i) in parseItems(findSection('pain-points').itemsJson)" :key="i" :class="{ reverse: i % 2 === 1 }">
+        <div class="text reveal">
+          <span class="num">{{ pp.num }}</span>
+          <h3>{{ pp.title }}</h3>
+          <p class="desc">{{ pp.desc }}</p>
+          <div class="sol-box">
+            <div class="lbl">Global SCM 解决方案</div>
+            <ul>
+              <li v-for="(it, j) in pp.items" :key="j">{{ it }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="visual reveal">
+          <img :src="pp.img" alt="" loading="lazy" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 供应链大脑模型 ═══ -->
+  <section class="section bg-gray" v-if="findSection('brain')">
+    <div class="container">
+      <div class="text-center reveal" style="margin-bottom:60px;">
+        <div class="eyebrow">SUPPLY CHAIN BRAIN</div>
+        <h2 class="section-title">一个底层逻辑：<span class="gradient-text">供应链大脑</span></h2>
+        <p class="section-sub">{{ findSection('brain').subtitle }}</p>
+      </div>
+      <div class="brain-flow">
+        <template v-for="(bn, i) in parseItems(findSection('brain').itemsJson)" :key="i">
+          <div class="brain-node reveal">
+            <div class="brain-step">{{ bn.step }}</div>
+            <div class="brain-icon">
+              <svg class="icon-svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" v-html="BRAIN_ICONS[i] || ''"></svg>
+            </div>
+            <h3>{{ bn.title }}</h3>
+            <div class="sub-cn">{{ bn.sub }}</div>
+            <p>{{ bn.desc }}</p>
+          </div>
+          <div class="brain-arrow" v-if="i < 3">→</div>
+        </template>
+      </div>
+      <div class="text-center reveal" style="margin-top:28px;">
+        <span class="brain-loop-hint">🔄 执行结果实时反馈回感知层，形成持续优化的智能闭环</span>
       </div>
     </div>
   </section>
