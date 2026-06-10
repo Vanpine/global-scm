@@ -2,6 +2,9 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const sections = ref([])
 
@@ -49,8 +52,8 @@ const DIFF_ICONS = [
     <img class="hero-video" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1920&q=90" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>为什么选择<span>我们</span></h1>
-      <p class="lead">两种模式，关键指标摊开来看</p>
+      <h1>{{ t('whyUs.heroTitle1') }}<span>{{ t('whyUs.heroTitle2') }}</span></h1>
+      <p class="lead">{{ t('whyUs.heroLead') }}</p>
       <p class="hero-sub">
         <span v-for="(item, i) in parseItems(findSection('hero').itemsJson)" :key="i">
           <svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" v-html="HERO_ICONS[item.icon] || ''"></svg>
@@ -65,14 +68,14 @@ const DIFF_ICONS = [
     <div class="container">
       <div class="compare-wrap">
         <div class="compare-col compare-old reveal">
-          <h3>经验驱动模式</h3>
+          <h3>{{ t('whyUs.expDriven') }}</h3>
           <div class="compare-row" v-for="(row, i) in parseJson(findSection('comparison').itemsJson).old?.rows || []" :key="i">
             <div class="metric">{{ row.metric }}</div>
             <div class="value">{{ row.value }}</div>
           </div>
         </div>
         <div class="compare-col compare-new reveal">
-          <h3>AI 数据驱动模式</h3>
+          <h3>{{ t('whyUs.aiDriven') }}</h3>
           <div class="compare-row" v-for="(row, i) in parseJson(findSection('comparison').itemsJson).new?.rows || []" :key="i">
             <div class="metric">{{ row.metric }}</div>
             <div class="value">{{ row.value }}</div>
@@ -82,14 +85,14 @@ const DIFF_ICONS = [
 
       <!-- 降本增效 -->
       <div class="savings reveal">
-        <h4>💰 降本增效 · 平台目标</h4>
+        <h4>{{ t('whyUs.costTitle') }}</h4>
         <div class="savings-grid">
-          <div class="savings-item"><div class="big">-32%</div><div class="lbl">库存成本</div></div>
-          <div class="savings-item"><div class="big">-25%</div><div class="lbl">物流成本</div></div>
-          <div class="savings-item"><div class="big">-45%</div><div class="lbl">关务罚款</div></div>
-          <div class="savings-item"><div class="big">-60%</div><div class="lbl">人工工时</div></div>
+          <div class="savings-item"><div class="big">-32%</div><div class="lbl">{{ t('whyUs.inventoryCost') }}</div></div>
+          <div class="savings-item"><div class="big">-25%</div><div class="lbl">{{ t('whyUs.logisticsCost') }}</div></div>
+          <div class="savings-item"><div class="big">-45%</div><div class="lbl">{{ t('whyUs.customsFine') }}</div></div>
+          <div class="savings-item"><div class="big">-60%</div><div class="lbl">{{ t('whyUs.laborHours') }}</div></div>
         </div>
-        <p style="text-align:center;font-size:13px;color:var(--text-tertiary);margin-top:22px;">* 以上为基于平台设计目标的测算，实际效果因企业与品类而异。</p>
+        <p style="text-align:center;font-size:13px;color:var(--text-tertiary);margin-top:22px;">{{ t('whyUs.disclaimer') }}</p>
       </div>
     </div>
   </section>
@@ -98,9 +101,9 @@ const DIFF_ICONS = [
   <section class="section bg-black" v-if="findSection('copilot')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:48px;">
-        <div class="eyebrow">AI COPILOT</div>
-        <h2 class="section-title">认识您的供应链大脑</h2>
-        <p class="section-sub">预测需求、响应中断、做出更聪明的决策 —— 全部通过一个 7×24 在线的 AI Copilot。</p>
+        <div class="eyebrow">{{ t('whyUs.aiCopilot') }}</div>
+        <h2 class="section-title">{{ t('whyUs.copilotTitle') }}</h2>
+        <p class="section-sub">{{ t('whyUs.copilotSub') }}</p>
       </div>
 
       <div class="product-shot reveal" style="margin-bottom:64px;">
@@ -133,9 +136,9 @@ const DIFF_ICONS = [
   <section class="section bg-gray" v-if="findSection('difference')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
-        <div class="eyebrow">OUR DIFFERENCE</div>
-        <h2 class="section-title">六个维度，<span class="gradient-text">做出区别</span></h2>
-        <p class="section-sub">不是功能清单的比拼，而是底层架构和产品理念的差异。</p>
+        <div class="eyebrow">{{ t('whyUs.difference') }}</div>
+        <h2 class="section-title">{{ t('whyUs.diffTitle') }}<span class="gradient-text">{{ t('whyUs.diffTitleGrad') }}</span></h2>
+        <p class="section-sub">{{ t('whyUs.diffSub') }}</p>
       </div>
       <div class="grid grid-3">
         <div class="card reveal" v-for="(dim, i) in parseItems(findSection('difference').itemsJson)" :key="i">

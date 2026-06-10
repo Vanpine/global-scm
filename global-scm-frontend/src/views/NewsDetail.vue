@@ -3,7 +3,9 @@ import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleDetail, getArticles, incrementArticleView, toggleArticleLike } from '@/api/article'
 import { useArticleInteraction } from '@/composables/useArticleInteraction'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const article = ref(null)
 const blocks = ref([])
@@ -18,11 +20,12 @@ const { hasViewedRecently, markViewed, isLiked, toggleLikeLocally } = useArticle
 
 // 分类映射
 const CAT_MAP = {
-  war:    { label: '地缘冲突', css: 'war' },
-  logi:   { label: '交通物流', css: 'logi' },
-  energy: { label: '能源与环境', css: 'energy' },
-  policy: { label: '贸易政策', css: 'policy' },
+  war:    { css: 'war' },
+  logi:   { css: 'logi' },
+  energy: { css: 'energy' },
+  policy: { css: 'policy' },
 }
+const CAT_LABELS = { war: 'intel.catWar', logi: 'intel.catLogi', energy: 'intel.catEnergy', policy: 'intel.catPolicy' }
 
 /**
  * 将 kt 块的纯文本内容解析为要点列表
@@ -48,7 +51,7 @@ async function loadArticle(id) {
     article.value = data.article
     blocks.value = data.blocks || []
     tags.value = data.tags || []
-    document.title = (article.value.title || '文章') + ' · 全球情报'
+    document.title = (article.value.title || '') + ' · Global SCM Intel'
 
     // 初始化计数（来自数据库）
     viewCount.value = article.value.viewCount || 0
@@ -94,13 +97,13 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
 
 <template>
   <!-- 加载中 -->
-  <div v-if="loading" style="text-align:center;padding:160px 0 80px;color:var(--text-secondary);">加载中...</div>
+  <div v-if="loading" style="text-align:center;padding:160px 0 80px;color:var(--text-secondary);">{{ t('general.loading') }}</div>
 
   <!-- 文章不存在 -->
   <div v-else-if="!article" style="text-align:center;padding:160px 0 80px;">
-    <h2 style="font-size:24px;margin-bottom:12px;">文章不存在</h2>
-    <p style="color:var(--text-secondary);margin-bottom:24px;">该文章可能已被删除或链接无效。</p>
-    <router-link to="/intel" class="btn btn-primary">← 返回新闻台</router-link>
+    <h2 style="font-size:24px;margin-bottom:12px;">{{ t('news.notFound') }}</h2>
+    <p style="color:var(--text-secondary);margin-bottom:24px;">{{ t('news.notFoundDesc') }}</p>
+    <router-link to="/intel" class="btn btn-primary">{{ t('news.backToIntel') }}</router-link>
   </div>
 
   <main v-else class="article-root">
@@ -109,8 +112,8 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
       <img v-if="article.coverImg" class="article-hero-img" :src="article.coverImg" alt="" onerror="this.style.display='none'">
       <div class="article-hero-overlay"></div>
       <div class="container article-hero-inner">
-        <router-link to="/intel" class="article-back">← 返回全球情报</router-link>
-        <span :class="'news-cat ' + (CAT_MAP[article.category]?.css || 'policy')">{{ CAT_MAP[article.category]?.label || article.category }}</span>
+        <router-link to="/intel" class="article-back">{{ t('news.backToGlobalIntel') }}</router-link>
+        <span :class="'news-cat ' + (CAT_MAP[article.category]?.css || 'policy')">{{ t(CAT_LABELS[article.category]) || article.category }}</span>
         <h1>{{ article.title }}</h1>
         <div class="article-meta" v-if="article.meta">
           <svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 10h16"/><path d="M4 14h8"/><path d="M4 18h5"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
@@ -134,7 +137,7 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
             <!-- 关键要点（对齐原型：ul > li 列表） -->
             <div v-if="block.blockType === 'kt'" class="kt-box">
               <div class="kt-title">
-                <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M5 7h14l-3 5 3 5H5"/><circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/></svg> 关键要点
+                <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M5 7h14l-3 5 3 5H5"/><circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/></svg> {{ t('news.keyPoints') }}
               </div>
               <ul>
                 <li v-for="(item, ki) in parseKtItems(block.content)" :key="ki">{{ item }}</li>
@@ -157,7 +160,7 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
         <!-- 原文来源 -->
         <div v-if="article.source || article.meta" class="read-origin">
           <span style="font-weight:600;">
-            <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 10h16"/><path d="M4 14h8"/><path d="M4 18h5"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg> 原文来源
+            <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 10h16"/><path d="M4 14h8"/><path d="M4 18h5"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg> {{ t('news.source') }}
           </span>
           <span class="read-origin-src">{{ article.source || article.meta }}</span>
         </div>
@@ -165,7 +168,7 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
         <!-- 阅读原文按钮（跳转到外站原文，新标签页打开） -->
         <div v-if="article.sourceUrl" style="margin-top:24px;text-align:center;">
           <a :href="article.sourceUrl" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;">
-            阅读原文
+            {{ t('news.readOriginal') }}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
         </div>
@@ -180,20 +183,20 @@ watch(() => route.params.id, (newId) => loadArticle(newId))
     <!-- ===== 继续阅读 ===== -->
     <section v-if="related.length" class="related-sec">
       <div class="container">
-        <h2 class="related-title">继续阅读</h2>
-        <p class="related-sub">更多塑造全球供应链的关键信号。</p>
+        <h2 class="related-title">{{ t('news.continueReading') }}</h2>
+        <p class="related-sub">{{ t('news.continueSub') }}</p>
         <div class="news-grid">
           <router-link v-for="(item, ri) in related" :key="ri"
                        :to="'/news/' + item.id" class="news-card">
             <div class="news-thumb">
               <img :src="item.coverImg" alt="" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentNode.classList.add('noimg')">
-              <span :class="'news-cat ' + (CAT_MAP[item.category]?.css || 'policy')">{{ CAT_MAP[item.category]?.label || item.category }}</span>
+              <span :class="'news-cat ' + (CAT_MAP[item.category]?.css || 'policy')">{{ t(CAT_LABELS[item.category]) || item.category }}</span>
             </div>
             <div class="news-info">
               <h3>{{ item.title }}</h3>
               <div class="news-foot">
                 <span class="news-meta">{{ item.meta }}</span>
-                <span class="news-more">阅读详情 →</span>
+                <span class="news-more">{{ t('news.readMore') }}</span>
               </div>
             </div>
           </router-link>

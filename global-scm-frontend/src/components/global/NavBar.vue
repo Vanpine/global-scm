@@ -1,17 +1,19 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const menuOpen = ref(false)
 
 const navLinks = [
-  { to: '/', label: '首页' },
-  { to: '/products', label: '产品功能' },
-  { to: '/solutions', label: '解决方案' },
-  { to: '/why-us', label: '为什么选我们' },
-  { to: '/intel', label: '供应链新闻台' }
+  { to: '/', key: 'nav.home' },
+  { to: '/products', key: 'nav.products' },
+  { to: '/solutions', key: 'nav.solutions' },
+  { to: '/why-us', key: 'nav.whyUs' },
+  { to: '/intel', key: 'nav.intel' }
 ]
 
 function isActive(path) {
@@ -31,6 +33,13 @@ function navigate(link) {
   closeMenu()
   router.push(link.to)
 }
+
+function toggleLang() {
+  locale.value = locale.value === 'zh-CN' ? 'en-US' : 'zh-CN'
+  localStorage.setItem('lang', locale.value)
+}
+
+const currentLangLabel = computed(() => locale.value === 'zh-CN' ? '中' : 'EN')
 </script>
 
 <template>
@@ -46,10 +55,10 @@ function navigate(link) {
           :href="link.to"
           :class="{ active: isActive(link.to) }"
           @click.prevent="navigate(link)"
-        >{{ link.label }}</a>
+        >{{ t(link.key) }}</a>
       </nav>
       <div class="nav-right">
-        <button class="lang-toggle" id="lang-toggle" aria-label="切换语言 / Switch language">
+        <button class="lang-toggle" id="lang-toggle" :aria-label="t('nav.langToggle')" @click="toggleLang">
           <span>
             <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
@@ -57,9 +66,9 @@ function navigate(link) {
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </span>
-          <span id="lang-current">EN</span>
+          <span id="lang-current">{{ currentLangLabel }}</span>
         </button>
-        <a class="nav-cta" href="/contact" @click.prevent="router.push('/contact')">申请加入</a>
+        <a class="nav-cta" href="/contact" @click.prevent="router.push('/contact')">{{ t('nav.join') }}</a>
       </div>
       <button class="nav-toggle" :class="{ open: menuOpen }" aria-label="菜单" @click="toggleMenu">
         <span></span><span></span><span></span>

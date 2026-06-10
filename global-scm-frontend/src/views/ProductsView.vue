@@ -2,6 +2,9 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const sections = ref([])
 
@@ -84,7 +87,7 @@ const AI_ICONS = [
     <img class="hero-video" src="https://images.unsplash.com/photo-1606964212858-c215029db704?auto=format&fit=crop&w=1920&q=85" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>六大模块<span>协同运转</span></h1>
+      <h1>{{ t('products.heroTitle1') }}<span>{{ t('products.heroTitle2') }}</span></h1>
       <p class="lead">{{ findSection('hero').subtitle }}</p>
       <p class="hero-sub">
         <span v-for="(item, i) in parseItems(findSection('hero').itemsJson)" :key="i">
@@ -116,7 +119,7 @@ const AI_ICONS = [
         </template>
       </div>
       <div class="crisis-bridge reveal" style="margin-top:32px;">
-        <p>下面这六个模块，一一对应上面<b>每个环节</b>。</p>
+        <p>{{ t('products.flowBridge') }}<b>{{ t('products.flowBridgeBold') }}</b>{{ t('products.flowBridgeEnd') }}</p>
         <span class="bridge-arrow">↓</span>
       </div>
     </div>
@@ -192,7 +195,7 @@ const AI_ICONS = [
     <div class="container text-center reveal">
       <h2 class="section-title">{{ findSection('cta').title }}</h2>
       <p class="section-sub" style="margin-bottom:24px;">{{ findSection('cta').subtitle }}</p>
-      <a class="btn btn-primary btn-lg" href="/solutions">查看解决方案 →</a>
+      <a class="btn btn-primary btn-lg" href="/solutions">{{ t('products.viewSolutions') }}</a>
     </div>
   </section>
 </template>

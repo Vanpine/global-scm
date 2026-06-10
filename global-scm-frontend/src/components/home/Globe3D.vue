@@ -182,6 +182,15 @@ onUnmounted(() => {
     el.removeEventListener('mouseenter', onMouseEnter)
     el.removeEventListener('mouseleave', onMouseLeave)
   }
+
+  // 清理 Three.js 渲染器的 DOM 元素，防止 parentNode 错误
+  if (globeWorld && globeWorld.renderer()) {
+    const domEl = globeWorld.renderer().domElement
+    if (domEl && domEl.parentNode) {
+      domEl.parentNode.removeChild(domEl)
+    }
+  }
+  globeWorld = null
 })
 </script>
 

@@ -2,6 +2,9 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const sections = ref([])
 
@@ -51,7 +54,7 @@ const PERSPECTIVE_ICONS = [
     <img class="hero-video" src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=1920&q=85" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>按场景<span>精准匹配</span></h1>
+      <h1>{{ t('solutions.heroTitle1') }}<span>{{ t('solutions.heroTitle2') }}</span></h1>
       <p class="lead">{{ findSection('hero').subtitle }}</p>
       <p class="hero-sub">
         <span v-for="(item, i) in parseItems(findSection('hero').itemsJson)" :key="i">
@@ -171,7 +174,7 @@ const PERSPECTIVE_ICONS = [
     <div class="container text-center reveal">
       <h2 class="section-title">{{ findSection('cta').title || '想了解这些场景背后的行业挑战？' }}</h2>
       <p class="section-sub" style="margin-bottom:24px;">{{ findSection('cta').subtitle || '每个业务场景背后，都是地缘、政策、供需等宏观挑战在驱动。看清全局，方案才落得住。' }}</p>
-      <a class="btn btn-ghost btn-lg" href="/pain-points">查看八大痛点与对策 →</a>
+      <a class="btn btn-ghost btn-lg" href="/pain-points">{{ t('solutions.viewPainPoints') }}</a>
     </div>
   </section>
 </template>

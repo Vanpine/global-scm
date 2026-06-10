@@ -13,8 +13,11 @@
  */
 
 import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Globe3D from './Globe3D.vue'
 import RiskFeed from './RiskFeed.vue'
+
+const { t } = useI18n()
 
 defineProps({
   feedItems: { type: Array, default: () => [] }  // 后端推送的要闻（当前未使用，保留扩展接口）
@@ -287,9 +290,9 @@ onUnmounted(() => {
     <div class="container">
       <!-- 顶部标题区 -->
       <div class="text-center reveal" style="margin-bottom:48px;">
-        <div class="eyebrow">CONTROL TOWER · 全球风险地图</div>
-        <h2 class="section-title">实时洞察全球供应链风险</h2>
-        <p class="section-sub">实时接入 GDACS 全球灾害（洪水/气旋/野火/干旱/火山）与 USGS 地震数据，高危区域自动高亮预警。</p>
+        <div class="eyebrow">CONTROL TOWER</div>
+        <h2 class="section-title">{{ t('home.riskTitle') }}</h2>
+        <p class="section-sub">{{ t('home.riskSub') }}</p>
       </div>
 
       <!-- 主体：3D 地球（左） + 轮播面板（右）-->
@@ -298,11 +301,11 @@ onUnmounted(() => {
           <div id="globeViz"></div>
           <Globe3D />
           <div class="globe-legend">
-            <span><i style="background:#ff3b30"></i>高危</span>
-            <span><i style="background:#ff9500"></i>关注</span>
-            <span><i style="background:#34c759"></i>正常</span>
+            <span><i style="background:#ff3b30"></i>{{ t('intel.high') }}</span>
+            <span><i style="background:#ff9500"></i>{{ t('intel.watch') }}</span>
+            <span><i style="background:#34c759"></i>{{ t('intel.normal') }}</span>
           </div>
-          <div class="globe-hint">拖动旋转 · 悬停查看详情</div>
+          <div class="globe-hint">{{ t('home.globeHint') }}</div>
         </div>
 
         <!-- 右侧地震快讯面板 -->
@@ -310,7 +313,7 @@ onUnmounted(() => {
       </div>
 
       <!-- 底部数据来源说明 -->
-      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">* 全球灾害数据来自 GDACS（每 60 秒刷新），地震数据来自 USGS，点击条目可跳转官网详情页。</p>
+      <p class="section-sub reveal" style="font-size:13px;margin-top:18px;opacity:0.7;">{{ t('home.riskDataSource') }}</p>
     </div>
   </section>
 </template>

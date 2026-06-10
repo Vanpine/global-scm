@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="" />
+    <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/package.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +16,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Vanpine/global-scm.git",
+    "accountId": "47881588-c019-4140-93e0-6e7023fb9330"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -31,9 +40,10 @@
     "RequestMappingsPanelWidth0": "75",
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.Application.executor": "Run",
     "Spring Boot.ScmApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "language",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -68,6 +78,7 @@
       <option name="presentableId" value="Default" />
       <updated>1780901638397</updated>
       <workItem from="1780901640591" duration="10404000" />
+      <workItem from="1781060229782" duration="660000" />
     </task>
     <servers />
   </component>

@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
   form: Object,
   submitting: Boolean
@@ -10,51 +14,51 @@ defineEmits(['submit'])
 <template>
   <div>
     <form class="contact-form-card reveal" style="height:100%;display:flex;flex-direction:column;" @submit.prevent="$emit('submit')">
-      <h3 class="form-title">填写需求，我们 24 小时内联系您</h3>
+      <h3 class="form-title">{{ t('form.title') }}</h3>
 
       <div class="form-row">
         <div class="form-field">
-          <label>姓名 *</label>
-          <input v-model="form.name" type="text" required placeholder="请输入您的姓名">
+          <label>{{ t('form.name') }}</label>
+          <input v-model="form.name" type="text" required :placeholder="t('form.namePlaceholder')">
         </div>
         <div class="form-field">
-          <label>公司名称 *</label>
-          <input v-model="form.company" type="text" required placeholder="请输入公司名称">
+          <label>{{ t('form.company') }}</label>
+          <input v-model="form.company" type="text" required :placeholder="t('form.companyPlaceholder')">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-field">
-          <label>工作邮箱 *</label>
-          <input v-model="form.email" type="email" required placeholder="name@company.com">
+          <label>{{ t('form.email') }}</label>
+          <input v-model="form.email" type="email" required :placeholder="t('form.emailPlaceholder')">
         </div>
         <div class="form-field">
-          <label>联系电话</label>
-          <input v-model="form.phone" type="tel" placeholder="+86 138-xxxx-xxxx">
+          <label>{{ t('form.phone') }}</label>
+          <input v-model="form.phone" type="tel" :placeholder="t('form.phonePlaceholder')">
         </div>
       </div>
 
       <div class="form-field">
-        <label>您的角色</label>
+        <label>{{ t('form.role') }}</label>
         <select v-model="form.role">
-          <option value="" disabled>请选择您的角色</option>
-          <option>CEO / 创始人</option>
-          <option>供应链 VP / 总监</option>
-          <option>采购负责人</option>
-          <option>仓储 / 物流负责人</option>
-          <option>其他</option>
+          <option value="" disabled>{{ t('form.rolePlaceholder') }}</option>
+          <option value="ceo">{{ t('form.roleCeo') }}</option>
+          <option value="vp">{{ t('form.roleSupplyChain') }}</option>
+          <option value="procurement">{{ t('form.roleProcurement') }}</option>
+          <option value="logistics">{{ t('form.roleLogistics') }}</option>
+          <option value="other">{{ t('form.roleOther') }}</option>
         </select>
       </div>
 
       <div class="form-field">
-        <label>您当前最大的供应链挑战是什么？</label>
-        <textarea v-model="form.message" placeholder="例如：单一供应商依赖、库存积压、异常响应慢、跨境合规复杂……"></textarea>
+        <label>{{ t('form.challenge') }}</label>
+        <textarea v-model="form.message" :placeholder="t('form.challengePlaceholder')"></textarea>
       </div>
 
       <button type="submit" class="btn btn-primary btn-lg" :disabled="submitting" style="width:100%;justify-content:center;">
-        {{ submitting ? '提交中...' : '提交咨询 →' }}
+        {{ submitting ? t('form.submitting') : t('form.submit') }}
       </button>
-      <p style="font-size:13px;color:var(--text-tertiary);margin-top:14px;text-align:center;">提交即表示您同意我们的隐私政策。我们绝不会向第三方分享您的信息。</p>
+      <p style="font-size:13px;color:var(--text-tertiary);margin-top:14px;text-align:center;">{{ t('form.privacy') }}</p>
     </form>
   </div>
 </template>

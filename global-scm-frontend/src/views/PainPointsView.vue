@@ -2,6 +2,9 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const sections = ref([])
 
@@ -52,7 +55,7 @@ const BRAIN_ICONS = [
     <img class="hero-video" src="https://images.unsplash.com/photo-1624969862644-791f3dc98927?auto=format&fit=crop&w=1920&q=90" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>供应链的<span>八道坎</span></h1>
+      <h1>{{ t('painPoints.heroTitle1') }}<span>{{ t('painPoints.heroTitle2') }}</span></h1>
       <p class="lead">{{ findSection('hero').subtitle }}</p>
       <p class="hero-sub">
         <span v-for="(item, i) in parseItems(findSection('hero').itemsJson)" :key="i">
@@ -100,7 +103,7 @@ const BRAIN_ICONS = [
           <h3>{{ pp.title }}</h3>
           <p class="desc">{{ pp.desc }}</p>
           <div class="sol-box">
-            <div class="lbl">Global SCM 解决方案</div>
+            <div class="lbl">{{ t('painPoints.solution') }}</div>
             <ul>
               <li v-for="(it, j) in pp.items" :key="j">{{ it }}</li>
             </ul>
@@ -136,7 +139,7 @@ const BRAIN_ICONS = [
         </template>
       </div>
       <div class="text-center reveal" style="margin-top:28px;">
-        <span class="brain-loop-hint">🔄 执行结果实时反馈回感知层，形成持续优化的智能闭环</span>
+        <span class="brain-loop-hint">{{ t('painPoints.brainHint') }}</span>
       </div>
     </div>
   </section>

@@ -12,7 +12,8 @@ const request = axios.create({
  */
 request.interceptors.request.use(
   (config) => {
-    // 预留：config.headers.Authorization = `Bearer ${token}`
+    const lang = localStorage.getItem('lang') || 'zh-CN'
+    config.headers['Accept-Language'] = lang
     return config
   },
   (err) => Promise.reject(err)

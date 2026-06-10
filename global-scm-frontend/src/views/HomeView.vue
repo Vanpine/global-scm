@@ -2,11 +2,14 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { getHero, getCrisisCards, getCarousel, getHomeSections } from '@/api/home'
 import { useScrollReveal } from '@/composables/useScrollReveal'
+import { useI18n } from 'vue-i18n'
 import HeroSection from '@/components/home/HeroSection.vue'
 import CrisisCards from '@/components/home/CrisisCards.vue'
 import CarouselBanner from '@/components/home/CarouselBanner.vue'
 import StatsBar from '@/components/home/StatsBar.vue'
 import RiskDashboard from '@/components/home/RiskDashboard.vue'
+
+const { t } = useI18n()
 
 const hero = ref(null)
 const crisisCards = ref([])
@@ -49,7 +52,7 @@ const { refresh: refreshReveal } = useScrollReveal()
 
 <template>
   <div v-if="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;color:var(--muted);">
-    加载中...
+    {{ t('home.loading') }}
   </div>
 
   <template v-else>
@@ -112,7 +115,7 @@ const { refresh: refreshReveal } = useScrollReveal()
           </div>
         </div>
         <div class="text-center reveal" style="margin-top:48px;">
-          <a class="btn btn-primary" href="/why-us">查看完整对比与降本数据 →</a>
+          <a class="btn btn-primary" href="/why-us">{{ t('home.viewFullComparison') }}</a>
         </div>
       </div>
     </section>
