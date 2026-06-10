@@ -3,6 +3,7 @@ package com.globalscm.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.globalscm.entity.pojo.Article;
+import com.globalscm.entity.vo.ArticleVo;
 import com.globalscm.mapper.ArticleMapper;
 import com.globalscm.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -17,35 +18,31 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper mapper;
 
     @Override
-    public List<Article> listAll(String lang) {
+    public List<ArticleVo> listAll(String lang) {
         List<Article> list = mapper.selectList(
             new LambdaQueryWrapper<Article>()
                 .eq(Article::getStatus, "published")
                 .orderByDesc(Article::getPublishedAt)
         );
-        list.forEach(a -> applyLang(a, lang));
-        return list;
+        return list.stream().map(a -> ArticleVo.from(a, lang)).toList();
     }
 
     @Override
-    public List<Article> listByCategory(String category, String lang) {
+    public List<ArticleVo> listByCategory(String category, String lang) {
         List<Article> list = mapper.selectList(
             new LambdaQueryWrapper<Article>()
                 .eq(Article::getCategory, category)
                 .eq(Article::getStatus, "published")
                 .orderByDesc(Article::getPublishedAt)
         );
-        list.forEach(a -> applyLang(a, lang));
-        return list;
+        return list.stream().map(a -> ArticleVo.from(a, lang)).toList();
     }
 
     @Override
-    public Article getById(Long id, String lang) {
+    public ArticleVo getById(Long id, String lang) {
         Article article = mapper.selectById(id);
-        if (article != null) {
-            applyLang(article, lang);
-        }
-        return article;
+        if (article == null) return null;
+        return ArticleVo.from(article, lang);
     }
 
     @Override
@@ -66,12 +63,5 @@ public class ArticleServiceImpl implements ArticleService {
         }
         mapper.update(null, wrapper);
         return mapper.selectById(id);
-    }
-
-    private void applyLang(Article a, String lang) {
-        if (!"en".equals(lang)) return;
-        if (a.getTitleEn() != null) a.setTitle(a.getTitleEn());
-        if (a.getSummaryEn() != null) a.setSummary(a.getSummaryEn());
-        if (a.getMetaEn() != null) a.setMeta(a.getMetaEn());
     }
 }

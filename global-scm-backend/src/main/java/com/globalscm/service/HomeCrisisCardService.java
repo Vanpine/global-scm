@@ -1,10 +1,10 @@
 package com.globalscm.service;
 
-import com.globalscm.entity.pojo.HomeCrisisCard;
+import com.globalscm.entity.vo.HomeCrisisCardVo;
 
 import java.util.List;
 
 public interface HomeCrisisCardService {
 
-    List<HomeCrisisCard> listAll(String lang);
+    List<HomeCrisisCardVo> listAll(String lang);
 }

@@ -20,6 +20,7 @@ public class ArticleBlock {
     private String blockType;
 
     private String content;
+
     @TableField("content_en")
     private String contentEn;
 

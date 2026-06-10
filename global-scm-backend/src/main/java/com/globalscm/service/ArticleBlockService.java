@@ -1,10 +1,10 @@
 package com.globalscm.service;
 
-import com.globalscm.entity.pojo.ArticleBlock;
+import com.globalscm.entity.vo.ArticleBlockVo;
 
 import java.util.List;
 
 public interface ArticleBlockService {
 
-    List<ArticleBlock> listByArticleId(Long articleId, String lang);
+    List<ArticleBlockVo> listByArticleId(Long articleId, String lang);
 }
