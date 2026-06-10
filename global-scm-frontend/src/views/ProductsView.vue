@@ -1,18 +1,21 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const sections = ref([])
 
-onMounted(async () => {
+async function loadData() {
   sections.value = await getPageSections('products') || []
   await nextTick()
   refreshReveal()
-})
+}
+
+onMounted(loadData)
+watch(locale, loadData)
 
 const { refresh: refreshReveal } = useScrollReveal()
 
@@ -102,8 +105,8 @@ const AI_ICONS = [
   <section class="section" v-if="findSection('pain-points-flow')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:48px;">
-        <div class="eyebrow">WHERE IT HURTS · 链路透视</div>
-        <h2 class="section-title">一趟货从采购到签收，<span class="gradient-text">至少过这几关</span></h2>
+        <div class="eyebrow">{{ t('products.flowEyebrow') }}</div>
+        <h2 class="section-title">{{ findSection('pain-points-flow').title }}</h2>
         <p class="section-sub">{{ findSection('pain-points-flow').subtitle }}</p>
       </div>
       <div class="flow reveal">
@@ -129,7 +132,7 @@ const AI_ICONS = [
   <section class="section bg-gray" v-if="findSection('modules')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
-        <div class="eyebrow">SIX MODULES</div>
+        <div class="eyebrow">{{ t('products.modulesEyebrow') }}</div>
         <h2 class="section-title">{{ findSection('modules').title }}</h2>
         <p class="section-sub">{{ findSection('modules').subtitle }}</p>
       </div>
@@ -151,8 +154,8 @@ const AI_ICONS = [
   <section class="section" v-if="findSection('beyond-core')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
-        <div class="eyebrow">BEYOND THE CORE · 增值模块</div>
-        <h2 class="section-title">供应链跑通了，<span class="gradient-text">把货卖好、把账算清</span></h2>
+        <div class="eyebrow">{{ t('products.beyondEyebrow') }}</div>
+        <h2 class="section-title">{{ findSection('beyond-core').title }}</h2>
         <p class="section-sub">{{ findSection('beyond-core').subtitle }}</p>
       </div>
       <div class="grid grid-2">
@@ -173,9 +176,9 @@ const AI_ICONS = [
   <section class="section bg-gray" v-if="findSection('ai-everywhere')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
-        <div class="eyebrow">AI EVERYWHERE</div>
-        <h2 class="section-title">六个模块，<span class="gradient-text">六套 AI 在背后跑</span></h2>
-        <p class="section-sub" style="letter-spacing:0.06em; line-height:1.8;">下 PO 自动比价，库存低了自动预警，航线断了自动推荐备选——AI 长在每个决策节点上。</p>
+        <div class="eyebrow">{{ t('products.aiEyebrow') }}</div>
+        <h2 class="section-title">{{ findSection('ai-everywhere').title }}</h2>
+        <p class="section-sub" style="letter-spacing:0.06em; line-height:1.8;">{{ findSection('ai-everywhere').subtitle }}</p>
       </div>
       <div class="grid grid-3">
         <div class="card reveal" v-for="(ai, i) in parseItems(findSection('ai-everywhere').itemsJson)" :key="i">

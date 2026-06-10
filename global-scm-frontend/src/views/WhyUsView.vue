@@ -1,18 +1,21 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const sections = ref([])
 
-onMounted(async () => {
+async function loadData() {
   sections.value = await getPageSections('why-us') || []
   await nextTick()
   refreshReveal()
-})
+}
+
+onMounted(loadData)
+watch(locale, loadData)
 
 const { refresh: refreshReveal } = useScrollReveal()
 

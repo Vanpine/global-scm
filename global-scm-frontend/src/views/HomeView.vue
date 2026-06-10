@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { getHero, getCrisisCards, getCarousel, getHomeSections } from '@/api/home'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useI18n } from 'vue-i18n'
@@ -9,7 +9,7 @@ import CarouselBanner from '@/components/home/CarouselBanner.vue'
 import StatsBar from '@/components/home/StatsBar.vue'
 import RiskDashboard from '@/components/home/RiskDashboard.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const hero = ref(null)
 const crisisCards = ref([])
@@ -18,7 +18,8 @@ const sections = ref([])
 
 const loading = ref(true)
 
-onMounted(async () => {
+async function loadData() {
+  loading.value = true
   try {
     const [h, cc, ca, sec] = await Promise.all([
       getHero(),
@@ -36,7 +37,10 @@ onMounted(async () => {
   loading.value = false
   await nextTick()
   refreshReveal()
-})
+}
+
+onMounted(loadData)
+watch(locale, loadData)
 
 function findSection(code) {
   return sections.value.find(s => s.section === code)
@@ -72,7 +76,7 @@ const { refresh: refreshReveal } = useScrollReveal()
     <section class="section" v-if="findSection('mission')">
       <div class="container">
         <div class="text-center reveal" style="margin-bottom:56px;">
-          <div class="eyebrow">OUR MISSION · 核心理念</div>
+          <div class="eyebrow">{{ t('home.missionEyebrow') }}</div>
           <h2 class="section-title">{{ findSection('mission').title }}</h2>
           <p class="section-sub">{{ findSection('mission').subtitle }}</p>
         </div>
@@ -96,7 +100,7 @@ const { refresh: refreshReveal } = useScrollReveal()
     <section class="section bg-gray" v-if="findSection('ai-empowerment')">
       <div class="container">
         <div class="text-center reveal" style="margin-bottom:60px;">
-          <div class="eyebrow">AI EMPOWERMENT · AI 赋能</div>
+          <div class="eyebrow">{{ t('home.aiEyebrow') }}</div>
           <h2 class="section-title">{{ findSection('ai-empowerment').title }}</h2>
           <p class="section-sub">{{ findSection('ai-empowerment').subtitle }}</p>
         </div>
@@ -130,7 +134,7 @@ const { refresh: refreshReveal } = useScrollReveal()
     <section class="section" v-if="findSection('cta')">
       <div class="container">
         <div class="cta-band reveal">
-          <div class="eyebrow">GET STARTED</div>
+          <div class="eyebrow">{{ t('home.ctaEyebrow') }}</div>
           <h2>{{ findSection('cta').title }}</h2>
           <p>{{ findSection('cta').subtitle }}</p>
           <div class="cta-actions">

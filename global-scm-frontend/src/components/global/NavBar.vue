@@ -58,7 +58,7 @@ const currentLangLabel = computed(() => locale.value === 'zh-CN' ? '中' : 'EN')
         >{{ t(link.key) }}</a>
       </nav>
       <div class="nav-right">
-        <button class="lang-toggle" id="lang-toggle" :aria-label="t('nav.langToggle')" @click="toggleLang">
+        <button type="button" class="lang-toggle" :aria-label="t('nav.langToggle')" @click="toggleLang">
           <span>
             <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>

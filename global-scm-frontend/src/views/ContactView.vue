@@ -1,12 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, watch, onMounted, nextTick } from 'vue'
 import { getPageSections } from '@/api/page'
 import { submitContact } from '@/api/contact'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useI18n } from 'vue-i18n'
 import ContactForm from '@/components/contact/ContactForm.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const sections = ref([])
 const heroSection = ref(null)
@@ -26,14 +26,17 @@ const toastVisible = ref(false)
 const toastMsg = ref('')
 let toastTimer = null
 
-onMounted(async () => {
+async function loadData() {
   const data = await getPageSections('contact')
   sections.value = data || []
   heroSection.value = sections.value.find(s => s.section === 'hero')
   officesSection.value = sections.value.find(s => s.section === 'offices')
   await nextTick()
   refreshReveal()
-})
+}
+
+onMounted(loadData)
+watch(locale, loadData)
 
 const { refresh: refreshReveal } = useScrollReveal()
 

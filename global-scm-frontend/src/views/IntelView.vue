@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, reactive, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { getArticles } from '@/api/article'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useRouter } from 'vue-router'
@@ -7,7 +7,7 @@ import { useI18n } from 'vue-i18n'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const loading = ref(true)
 
@@ -193,7 +193,8 @@ function destroyMap() {
 
 // ═══════════════════════════════════════════════════════
 
-onMounted(async () => {
+async function loadData() {
+  loading.value = true
   const promises = CAT_ORDER.map(async cat => {
     const result = await getArticles(cat)
     if (result && result.records) {
@@ -204,8 +205,14 @@ onMounted(async () => {
   loading.value = false
   await nextTick()
   refreshReveal()
+}
+
+onMounted(async () => {
+  await loadData()
   initMap()
 })
+
+watch(locale, loadData)
 
 onUnmounted(() => {
   destroyMap()

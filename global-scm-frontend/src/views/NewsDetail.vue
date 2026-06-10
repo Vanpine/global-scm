@@ -5,7 +5,7 @@ import { getArticleDetail, getArticles, incrementArticleView, toggleArticleLike 
 import { useArticleInteraction } from '@/composables/useArticleInteraction'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const route = useRoute()
 const article = ref(null)
 const blocks = ref([])
@@ -93,6 +93,11 @@ onMounted(() => loadArticle(route.params.id))
 
 // 同一组件内路由切换（如 /news/1 → /news/2）时重新加载
 watch(() => route.params.id, (newId) => loadArticle(newId))
+
+// 语言切换时重新加载文章（获取对应语言版本）
+watch(locale, () => {
+  if (route.params.id) loadArticle(route.params.id)
+})
 </script>
 
 <template>

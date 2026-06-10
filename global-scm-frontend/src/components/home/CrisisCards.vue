@@ -1,4 +1,8 @@
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
   cards: { type: Array, required: true }
 })
@@ -12,9 +16,9 @@ function parseItems(json) {
   <section class="section" style="padding-bottom:64px;">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:48px;">
-        <div class="eyebrow">POLYCRISIS · 多重危机</div>
-        <h2 class="section-title">传统供应链，正被<span class="gradient-text">多重危机</span>围困</h2>
-        <p class="section-sub">政策、物流、需求、网络安全…… 风险不再单独出现，而是同时引爆。</p>
+        <div class="eyebrow">{{ t('home.crisisEyebrow') }}</div>
+        <h2 class="section-title">{{ t('home.crisisTitle1') }}<span class="gradient-text">{{ t('home.crisisTitle2') }}</span>{{ t('home.crisisTitle3') }}</h2>
+        <p class="section-sub">{{ t('home.crisisSub') }}</p>
       </div>
       <div style="height:80px;"></div>
       <div class="crisis-featured">
@@ -33,9 +37,9 @@ function parseItems(json) {
         </article>
       </div>
       <div class="crisis-bridge reveal">
-        <div class="eyebrow">THE ANSWER · 解决之道</div>
-        <h2 class="section-title">风险已不再单独出现</h2>
-        <p class="section-sub">应对多重危机，需要一个能<span>实时感知 · 智能决策 · 自动执行</span>的供应链大平台。</p>
+        <div class="eyebrow">{{ t('home.crisisAnswerEyebrow') }}</div>
+        <h2 class="section-title">{{ t('home.crisisAnswerTitle') }}</h2>
+        <p class="section-sub">{{ t('home.crisisAnswerSub1') }}<span>{{ t('home.crisisAnswerSub2') }}</span>{{ t('home.crisisAnswerSub3') }}</p>
         <span class="bridge-arrow">↓</span>
       </div>
     </div>
