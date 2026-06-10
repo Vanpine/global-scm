@@ -73,7 +73,7 @@ const BRAIN_ICONS = [
   <section class="section-sm bg-gray" style="padding-top:100px; padding-bottom:100px;" v-if="findSection('preview')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:64px;">
-        <div class="eyebrow">SOUND FAMILIAR? · 你是否也遇到</div>
+        <div class="eyebrow">{{ t('painPoints.previewEyebrow') }}</div>
         <h2 class="section-title">{{ findSection('preview').title }}</h2>
         <p class="section-sub">{{ findSection('preview').subtitle }}</p>
       </div>
@@ -94,8 +94,8 @@ const BRAIN_ICONS = [
   <section class="section" v-if="findSection('pain-points')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:56px;">
-        <div class="eyebrow">8 PAIN POINTS · 八大痛点</div>
-        <h2 class="section-title">八道坎，<span class="gradient-text">逐一拆解</span></h2>
+        <div class="eyebrow">{{ t('painPoints.painPointsEyebrow') }}</div>
+        <h2 class="section-title">{{ t('painPoints.painPointsTitle1') }}<span class="gradient-text">{{ t('painPoints.painPointsTitle2') }}</span></h2>
         <p class="section-sub">{{ findSection('pain-points').subtitle }}</p>
       </div>
     </div>
@@ -123,8 +123,8 @@ const BRAIN_ICONS = [
   <section class="section bg-gray" v-if="findSection('brain')">
     <div class="container">
       <div class="text-center reveal" style="margin-bottom:60px;">
-        <div class="eyebrow">SUPPLY CHAIN BRAIN</div>
-        <h2 class="section-title">一个底层逻辑：<span class="gradient-text">供应链大脑</span></h2>
+        <div class="eyebrow">{{ t('painPoints.brainEyebrow') }}</div>
+        <h2 class="section-title">{{ t('painPoints.brainTitle1') }}<span class="gradient-text">{{ t('painPoints.brainTitle2') }}</span></h2>
         <p class="section-sub">{{ findSection('brain').subtitle }}</p>
       </div>
       <div class="brain-flow">

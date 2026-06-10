@@ -9,21 +9,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * 首页危机卡片业务实现
- */
 @Service
 @RequiredArgsConstructor
 public class HomeCrisisCardServiceImpl implements HomeCrisisCardService {
 
     private final HomeCrisisCardMapper mapper;
 
-    /**
-     * 全量查询危机卡片，按 sort_order 升序
-     * 保证前端渲染顺序为：贸易政策 → 地缘政治 → 物流瓶颈 → 需求风险 → 供应风险 → 网络安全
-     */
     @Override
-    public List<HomeCrisisCard> listAll() {
-        return mapper.selectList(new LambdaQueryWrapper<HomeCrisisCard>().orderByAsc(HomeCrisisCard::getSortOrder));
+    public List<HomeCrisisCard> listAll(String lang) {
+        List<HomeCrisisCard> list = mapper.selectList(
+            new LambdaQueryWrapper<HomeCrisisCard>().orderByAsc(HomeCrisisCard::getSortOrder)
+        );
+        list.forEach(c -> applyLang(c, lang));
+        return list;
+    }
+
+    private void applyLang(HomeCrisisCard c, String lang) {
+        if (!"en".equals(lang)) return;
+        if (c.getTagEn() != null) c.setTag(c.getTagEn());
+        if (c.getTitleEn() != null) c.setTitle(c.getTitleEn());
+        if (c.getDescriptionEn() != null) c.setDescription(c.getDescriptionEn());
+        if (c.getItemsJsonEn() != null) c.setItemsJson(c.getItemsJsonEn());
     }
 }

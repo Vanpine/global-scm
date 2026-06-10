@@ -5,8 +5,65 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ed49ed8b-02bc-4fdf-ba87-46238df9975f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/ArticleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/ArticleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/PageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/controller/PageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/Article.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/Article.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/ArticleBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/ArticleBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/ArticleTag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/ArticleTag.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeCarousel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeCarousel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeCrisisCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeCrisisCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeHero.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeHero.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/HomeSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/PageSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/entity/pojo/PageSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleBlockService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleBlockService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleTagService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/ArticleTagService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeCarouselService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeCarouselService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeCrisisCardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeCrisisCardService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeHeroService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeHeroService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeSectionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/HomeSectionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/PageSectionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/PageSectionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleBlockServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleBlockServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleTagServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/ArticleTagServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeCarouselServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeCarouselServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeCrisisCardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeCrisisCardServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeHeroServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeHeroServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeSectionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/HomeSectionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/PageSectionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/globalscm/service/impl/PageSectionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/controller/ArticleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/controller/ArticleController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/controller/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/controller/HomeController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/controller/PageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/controller/PageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/Article.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/Article.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/ArticleBlock.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/ArticleBlock.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/ArticleTag.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/ArticleTag.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeCarousel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeCarousel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeCrisisCard.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeCrisisCard.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeHero.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeHero.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeSection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/HomeSection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/PageSection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/entity/pojo/PageSection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleBlockService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleBlockService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleTagService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/ArticleTagService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeCarouselService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeCarouselService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeCrisisCardService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeCrisisCardService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeHeroService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeHeroService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeSectionService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/HomeSectionService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/PageSectionService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/PageSectionService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleBlockServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleBlockServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleTagServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/ArticleTagServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeCarouselServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeCarouselServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeCrisisCardServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeCrisisCardServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeHeroServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeHeroServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeSectionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/HomeSectionServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/PageSectionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/globalscm/service/impl/PageSectionServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/i18n/locales/en-US.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/i18n/locales/en-US.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/i18n/locales/zh-CN.json" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/i18n/locales/zh-CN.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../global-scm-frontend/src/views/PainPointsView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../global-scm-frontend/src/views/PainPointsView.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,12 +73,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Vanpine/global-scm.git",
-    "accountId": "47881588-c019-4140-93e0-6e7023fb9330"
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Vanpine"
   }
 }]]></component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Vanpine/global-scm.git&quot;,
+    &quot;accountId&quot;: &quot;47881588-c019-4140-93e0-6e7023fb9330&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -53,6 +116,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\Desktop\Global SCM\global-scm-backend\sql" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="global-scm-backend" />

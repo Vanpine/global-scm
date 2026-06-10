@@ -1,6 +1,7 @@
 package com.globalscm.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -19,6 +20,8 @@ public class ArticleBlock {
     private String blockType;
 
     private String content;
+    @TableField("content_en")
+    private String contentEn;
 
     private Integer sortOrder;
 }

@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * 文章业务实现
- */
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
@@ -20,27 +17,35 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper mapper;
 
     @Override
-    public List<Article> listAll() {
-        return mapper.selectList(
+    public List<Article> listAll(String lang) {
+        List<Article> list = mapper.selectList(
             new LambdaQueryWrapper<Article>()
                 .eq(Article::getStatus, "published")
                 .orderByDesc(Article::getPublishedAt)
         );
+        list.forEach(a -> applyLang(a, lang));
+        return list;
     }
 
     @Override
-    public List<Article> listByCategory(String category) {
-        return mapper.selectList(
+    public List<Article> listByCategory(String category, String lang) {
+        List<Article> list = mapper.selectList(
             new LambdaQueryWrapper<Article>()
                 .eq(Article::getCategory, category)
                 .eq(Article::getStatus, "published")
                 .orderByDesc(Article::getPublishedAt)
         );
+        list.forEach(a -> applyLang(a, lang));
+        return list;
     }
 
     @Override
-    public Article getById(Long id) {
-        return mapper.selectById(id);
+    public Article getById(Long id, String lang) {
+        Article article = mapper.selectById(id);
+        if (article != null) {
+            applyLang(article, lang);
+        }
+        return article;
     }
 
     @Override
@@ -61,5 +66,12 @@ public class ArticleServiceImpl implements ArticleService {
         }
         mapper.update(null, wrapper);
         return mapper.selectById(id);
+    }
+
+    private void applyLang(Article a, String lang) {
+        if (!"en".equals(lang)) return;
+        if (a.getTitleEn() != null) a.setTitle(a.getTitleEn());
+        if (a.getSummaryEn() != null) a.setSummary(a.getSummaryEn());
+        if (a.getMetaEn() != null) a.setMeta(a.getMetaEn());
     }
 }

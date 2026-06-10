@@ -7,29 +7,33 @@ import com.globalscm.service.HomeHeroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-/**
- * 首页 Hero 区业务实现
- */
 @Service
 @RequiredArgsConstructor
 public class HomeHeroServiceImpl implements HomeHeroService {
 
     private final HomeHeroMapper mapper;
 
-    /**
-     * 查询表中第一条记录作为 Hero 配置
-     * 使用 LIMIT 1 确保只返回一条
-     */
     @Override
-    public HomeHero get() {
-        return mapper.selectOne(new LambdaQueryWrapper<HomeHero>().last("LIMIT 1"));
+    public HomeHero get(String lang) {
+        HomeHero hero = mapper.selectOne(new LambdaQueryWrapper<HomeHero>().last("LIMIT 1"));
+        if (hero != null) {
+            applyLang(hero, lang);
+        }
+        return hero;
     }
 
-    /**
-     * 按主键 ID 更新 Hero 配置的各个字段
-     */
     @Override
     public void update(HomeHero hero) {
         mapper.updateById(hero);
+    }
+
+    private void applyLang(HomeHero h, String lang) {
+        if (!"en".equals(lang)) return;
+        if (h.getTitleEn() != null) h.setTitle(h.getTitleEn());
+        if (h.getHighlightEn() != null) h.setHighlight(h.getHighlightEn());
+        if (h.getSubtitleEn() != null) h.setSubtitle(h.getSubtitleEn());
+        if (h.getTagsJsonEn() != null) h.setTagsJson(h.getTagsJsonEn());
+        if (h.getCtaPrimaryTextEn() != null) h.setCtaPrimaryText(h.getCtaPrimaryTextEn());
+        if (h.getCtaSecondaryTextEn() != null) h.setCtaSecondaryText(h.getCtaSecondaryTextEn());
     }
 }

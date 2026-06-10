@@ -9,20 +9,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * 首页轮播图业务实现
- */
 @Service
 @RequiredArgsConstructor
 public class HomeCarouselServiceImpl implements HomeCarouselService {
 
     private final HomeCarouselMapper mapper;
 
-    /**
-     * 全量查询轮播图，按 sort_order 升序
-     */
     @Override
-    public List<HomeCarousel> listAll() {
-        return mapper.selectList(new LambdaQueryWrapper<HomeCarousel>().orderByAsc(HomeCarousel::getSortOrder));
+    public List<HomeCarousel> listAll(String lang) {
+        List<HomeCarousel> list = mapper.selectList(
+            new LambdaQueryWrapper<HomeCarousel>().orderByAsc(HomeCarousel::getSortOrder)
+        );
+        list.forEach(c -> applyLang(c, lang));
+        return list;
+    }
+
+    private void applyLang(HomeCarousel c, String lang) {
+        if (!"en".equals(lang)) return;
+        if (c.getEyebrowEn() != null) c.setEyebrow(c.getEyebrowEn());
+        if (c.getTitleEn() != null) c.setTitle(c.getTitleEn());
+        if (c.getDescriptionEn() != null) c.setDescription(c.getDescriptionEn());
     }
 }

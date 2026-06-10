@@ -139,6 +139,13 @@
   "painPoints": {
     "heroTitle1": "供应链的",
     "heroTitle2": "八道坎",
+    "previewEyebrow": "SOUND FAMILIAR? · 你是否也遇到",
+    "painPointsEyebrow": "8 PAIN POINTS · 八大痛点",
+    "painPointsTitle1": "八道坎，",
+    "painPointsTitle2": "逐一拆解",
+    "brainEyebrow": "SUPPLY CHAIN BRAIN",
+    "brainTitle1": "一个底层逻辑：",
+    "brainTitle2": "供应链大脑",
     "solution": "Global SCM 解决方案",
     "brainHint": "🔄 执行结果实时反馈回感知层，形成持续优化的智能闭环"
   },

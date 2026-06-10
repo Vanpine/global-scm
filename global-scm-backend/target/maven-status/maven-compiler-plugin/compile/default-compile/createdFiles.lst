@@ -26,6 +26,7 @@ com\globalscm\config\WebConfig.class
 com\globalscm\mapper\ArticleTagMapper.class
 com\globalscm\service\ArticleService.class
 com\globalscm\service\ArticleTagService.class
+com\globalscm\util\LangResolver.class
 com\globalscm\entity\pojo\HomeHero.class
 com\globalscm\mapper\HomeCarouselMapper.class
 com\globalscm\entity\pojo\Contact.class

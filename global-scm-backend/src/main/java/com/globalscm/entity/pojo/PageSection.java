@@ -22,11 +22,17 @@ public class PageSection {
     private String section;
 
     private String title;
+    @TableField("title_en")
+    private String titleEn;
 
     private String subtitle;
+    @TableField("subtitle_en")
+    private String subtitleEn;
 
     @TableField("items_json")
     private String itemsJson;
+    @TableField("items_json_en")
+    private String itemsJsonEn;
 
     private Integer sortOrder;
 

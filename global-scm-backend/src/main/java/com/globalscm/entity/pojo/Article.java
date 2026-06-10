@@ -1,6 +1,7 @@
 package com.globalscm.entity.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -17,8 +18,12 @@ public class Article {
     private Long id;
 
     private String title;
+    @TableField("title_en")
+    private String titleEn;
 
     private String summary;
+    @TableField("summary_en")
+    private String summaryEn;
 
     private String category;
 
@@ -29,6 +34,8 @@ public class Article {
     private String sourceUrl;
 
     private String meta;
+    @TableField("meta_en")
+    private String metaEn;
 
     private String status;
 

@@ -9,22 +9,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * 首页区块业务实现
- * 管理 stats / mission / ai-empowerment / risk-feed / cta 五个区块
- */
 @Service
 @RequiredArgsConstructor
 public class HomeSectionServiceImpl implements HomeSectionService {
 
     private final HomeSectionMapper mapper;
 
-    /**
-     * 全量查询首页区块，按 sort_order 升序
-     * 保证前端渲染顺序固定，区块通过 section 字段区分类型
-     */
     @Override
-    public List<HomeSection> listAll() {
-        return mapper.selectList(new LambdaQueryWrapper<HomeSection>().orderByAsc(HomeSection::getSortOrder));
+    public List<HomeSection> listAll(String lang) {
+        List<HomeSection> list = mapper.selectList(
+            new LambdaQueryWrapper<HomeSection>().orderByAsc(HomeSection::getSortOrder)
+        );
+        list.forEach(s -> applyLang(s, lang));
+        return list;
+    }
+
+    private void applyLang(HomeSection s, String lang) {
+        if (!"en".equals(lang)) return;
+        if (s.getTitleEn() != null) s.setTitle(s.getTitleEn());
+        if (s.getSubtitleEn() != null) s.setSubtitle(s.getSubtitleEn());
+        if (s.getItemsJsonEn() != null) s.setItemsJson(s.getItemsJsonEn());
     }
 }
